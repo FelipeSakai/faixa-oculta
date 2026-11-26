@@ -1,0 +1,73 @@
+name: Faixa Oculta
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: faixa-oculta-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Testar e compilar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Guardar o jogo compilado
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: faixa-oculta
+          path: dist/index.html
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    name: Publicar na VPS
+    needs: build
+    if: github.ref == 'refs/heads/main' && vars.VPS_HOST != ''
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: faixa-oculta
+          path: dist
+      - name: Atualizar o HTML via SSH
+        env:
+          VPS_HOST: ${{ vars.VPS_HOST }}
+          VPS_USER: ${{ vars.VPS_USER }}
+          VPS_PATH: ${{ vars.VPS_PATH }}
+          VPS_PORT: ${{ vars.VPS_PORT || '22' }}
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          : "${VPS_USER:?Configure a variável VPS_USER}" "${VPS_PATH:?Configure a variável VPS_PATH}"
+          : "${SSH_PRIVATE_KEY:?Configure o secret VPS_SSH_KEY}" "${SSH_KNOWN_HOSTS:?Configure o secret VPS_KNOWN_HOSTS}"
+          [[ "$VPS_PATH" == /* && "$VPS_PATH" != / ]] || { echo 'VPS_PATH deve ser a pasta absoluta do site.'; exit 1; }
+          [[ "$VPS_PORT" =~ ^[0-9]+$ ]] || { echo 'VPS_PORT deve ser uma porta numérica.'; exit 1; }
+
+          umask 077
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          rsync --checksum --perms --chmod=F644 --protect-args \
+            --rsh="ssh -i ~/.ssh/deploy_key -p $VPS_PORT -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
+            -- dist/index.html "$VPS_USER@$VPS_HOST:${VPS_PATH%/}/index.html"

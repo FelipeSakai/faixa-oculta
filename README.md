@@ -58,7 +58,16 @@ O botão **Nova partida** abre a configuração e pede confirmação antes de su
 
 ## Hospedar
 
-Para publicar, use `npm ci` e `npm run build` e sirva o conteúdo de `dist/` em um endereço HTTPS estável. O pacote já inclui `dist/index.html` pronto para hospedagem estática. O HTML também abre diretamente para uma prévia, mas o armazenamento de arquivos abertos por duplo clique depende do navegador.
+O GitHub Actions roda `npm ci`, `npm test` e `npm run build` em pushes e pull requests para `main`. Na `main`, o HTML compilado fica disponível para download na execução. Depois de configurar a VPS, cada push aprovado pelos testes publica esse mesmo `index.html` na pasta do jogo. [Execuções do workflow](https://github.com/FelipeSakai/faixa-oculta/actions/workflows/jogo.yml)
+
+### Conectar a VPS por SSH
+
+1. Configure o servidor web para servir uma pasta do jogo por HTTPS. A VPS precisa ter SSH e `rsync`. O usuário de deploy precisa de escrita na pasta do jogo e da chave pública de deploy em `~/.ssh/authorized_keys`.
+2. Em **Settings → Secrets and variables → Actions**, cadastre os secrets `VPS_SSH_KEY` (chave privada de deploy) e `VPS_KNOWN_HOSTS` (linha de `known_hosts` com a chave pública do servidor, conferida no console da VPS). Para uma porta diferente de 22, a linha começa com `[host]:porta`.
+3. Na aba **Variables**, crie as variáveis de **repositório** `VPS_USER` (usuário SSH) e `VPS_PATH` (pasta absoluta do site, por exemplo `/var/www/faixa-oculta`). Se necessário, defina `VPS_PORT` (padrão `22`). Por último, crie `VPS_HOST` com o domínio ou IP do SSH para ativar o deploy.
+4. Para publicar a versão atual, abra **Actions → Faixa Oculta → Run workflow** e selecione `main`. Os pushes seguintes publicam automaticamente. O `rsync` transfere o HTML para um arquivo temporário e o renomeia quando a transferência termina.
+
+Para hospedar manualmente, use `npm ci` e `npm run build` e sirva o conteúdo de `dist/`. O pacote já inclui `dist/index.html` pronto para hospedagem estática. O HTML também abre diretamente para uma prévia, mas o armazenamento de arquivos abertos por duplo clique depende do navegador.
 
 A aplicação usa JavaScript com JSX, React, HTML e CSS. O Vite gera o HTML final. Os arquivos JSON em `src/data/` alimentam o catálogo no build e incluem metadados de playlists. Quem receber o código ou o HTML publicado consegue consultar essa seleção. A hospedagem dispensa servidor de aplicação, banco de dados, migrations, credenciais e integração com a API do Spotify. Cada aparelho mantém seu próprio placar.
 
