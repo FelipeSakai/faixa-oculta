@@ -1,0 +1,295 @@
+{
+  "name": "Clássicos Internacionais",
+  "tracks": [
+    {
+      "title": "La Bamba",
+      "artist": "Ritchie Valens",
+      "spotify_url": "https://open.spotify.com/track/1zR36SMwtnyjUXIHOM78Kz"
+    },
+    {
+      "title": "Hey Jude",
+      "artist": "The Beatles",
+      "spotify_url": "https://open.spotify.com/track/0aym2LBJBk9DAYuHHutrIl"
+    },
+    {
+      "title": "Bohemian Rhapsody",
+      "artist": "Queen",
+      "spotify_url": "https://open.spotify.com/track/4u7EnebtmKWzUH433cf5Qv"
+    },
+    {
+      "title": "Dancing Queen",
+      "artist": "ABBA",
+      "spotify_url": "https://open.spotify.com/track/0GjEhVFGZW8afUYGChu3Rr"
+    },
+    {
+      "title": "Stayin’ Alive",
+      "artist": "Bee Gees",
+      "spotify_url": "https://open.spotify.com/track/5ubvP9oKmxLUVq506fgLhk"
+    },
+    {
+      "title": "September",
+      "artist": "Earth, Wind & Fire",
+      "spotify_url": "https://open.spotify.com/track/2grjqo0Frpf2okIBiifQKs"
+    },
+    {
+      "title": "I Will Survive",
+      "artist": "Gloria Gaynor",
+      "spotify_url": "https://open.spotify.com/track/6g0cpYD7gmMHKrqYhPZ6Qq"
+    },
+    {
+      "title": "Y.M.C.A.",
+      "artist": "Village People",
+      "spotify_url": "https://open.spotify.com/track/5yHFgsF0CUYtXK6it6jdPR"
+    },
+    {
+      "title": "Billie Jean",
+      "artist": "Michael Jackson",
+      "spotify_url": "https://open.spotify.com/track/5ChkMS8OtdzJeqyybCc9R5"
+    },
+    {
+      "title": "Girls Just Want to Have Fun",
+      "artist": "Cyndi Lauper",
+      "spotify_url": "https://open.spotify.com/track/25E1DGJCjJNmq5iwmAMV3p"
+    },
+    {
+      "title": "Take on Me",
+      "artist": "a-ha",
+      "spotify_url": "https://open.spotify.com/track/2WfaOiMkCvy7F5fcp2zZ8L"
+    },
+    {
+      "title": "Livin’ on a Prayer",
+      "artist": "Bon Jovi",
+      "spotify_url": "https://open.spotify.com/track/37ZJ0p5Jm13JPevGcx4SkF"
+    },
+    {
+      "title": "The Final Countdown",
+      "artist": "Europe",
+      "spotify_url": "https://open.spotify.com/track/3MrRksHupTVEQ7YbA0FsZK"
+    },
+    {
+      "title": "I Wanna Dance with Somebody (Who Loves Me)",
+      "artist": "Whitney Houston",
+      "spotify_url": "https://open.spotify.com/track/2tUBqZG2AbRi7Q0BIrVrEj"
+    },
+    {
+      "title": "Sweet Child O’ Mine",
+      "artist": "Guns N’ Roses",
+      "spotify_url": "https://open.spotify.com/track/7o2CTH4ctstm8TNelqjb51"
+    },
+    {
+      "title": "Like a Prayer",
+      "artist": "Madonna",
+      "spotify_url": "https://open.spotify.com/track/65pIfumKIA8VFj36WcjKhQ"
+    },
+    {
+      "title": "Smells Like Teen Spirit",
+      "artist": "Nirvana",
+      "spotify_url": "https://open.spotify.com/track/5ghIJDpPoe3CfHMGu71E6T"
+    },
+    {
+      "title": "Gangsta’s Paradise",
+      "artist": "Coolio, L.V.",
+      "spotify_url": "https://open.spotify.com/track/2ubXHpNW6NqPUIpQmNKnUT"
+    },
+    {
+      "title": "Macarena - Bayside Boys Remix",
+      "artist": "Los Del Rio",
+      "spotify_url": "https://open.spotify.com/track/79QSjQKos3gOIkkPO5PrZT"
+    },
+    {
+      "title": "Wannabe",
+      "artist": "Spice Girls",
+      "spotify_url": "https://open.spotify.com/track/1Je1IMUlBXcx1Fz0WE7oPT"
+    },
+    {
+      "title": "My Heart Will Go On",
+      "artist": "Céline Dion",
+      "spotify_url": "https://open.spotify.com/track/33LC84JgLvK2KuW43MfaNq"
+    },
+    {
+      "title": "I Want It That Way",
+      "artist": "Backstreet Boys",
+      "spotify_url": "https://open.spotify.com/track/47BBI51FKFwOMlIiX6m8ya"
+    },
+    {
+      "title": "Crazy in Love",
+      "artist": "Beyoncé, JAŸ-Z",
+      "spotify_url": "https://open.spotify.com/track/5IVuqXILoxVWvWEPm82Jxr"
+    },
+    {
+      "title": "Hey Ya!",
+      "artist": "Outkast",
+      "spotify_url": "https://open.spotify.com/track/2PpruBYCo4H7WOBJ7Q2EwM"
+    },
+    {
+      "title": "Toxic",
+      "artist": "Britney Spears",
+      "spotify_url": "https://open.spotify.com/track/6I9VzXrHxO9rA9A5euc8Ak"
+    },
+    {
+      "title": "Gasolina",
+      "artist": "Daddy Yankee",
+      "spotify_url": "https://open.spotify.com/track/5YoITs1m0q8UOQ4AW7N5ga"
+    },
+    {
+      "title": "Hips Don’t Lie",
+      "artist": "Shakira, Wyclef Jean",
+      "spotify_url": "https://open.spotify.com/track/3ZFTkvIE7kyPt6Nu3PEa7V"
+    },
+    {
+      "title": "Umbrella",
+      "artist": "Rihanna, JAŸ-Z",
+      "spotify_url": "https://open.spotify.com/track/49FYlytm3dAAraYgpoJZux"
+    },
+    {
+      "title": "Viva La Vida",
+      "artist": "Coldplay",
+      "spotify_url": "https://open.spotify.com/track/1mea3bSkSGXuIRvnydlB5b"
+    },
+    {
+      "title": "Rolling in the Deep",
+      "artist": "Adele",
+      "spotify_url": "https://open.spotify.com/track/1c8gk2PeTE04A1pIDH9YMk"
+    },
+    {
+      "title": "Wake Me Up",
+      "artist": "Avicii",
+      "spotify_url": "https://open.spotify.com/track/0nrRP2bk19rLc0orkWPQk2"
+    },
+    {
+      "title": "Levels - Radio Edit",
+      "artist": "Avicii",
+      "spotify_url": "https://open.spotify.com/track/5UqCQaDshqbIk3pkhy4Pjg"
+    },
+    {
+      "title": "Despacito",
+      "artist": "Luis Fonsi, Daddy Yankee",
+      "spotify_url": "https://open.spotify.com/track/6habFhsOp2NvshLv26DqMb"
+    },
+    {
+      "title": "Shape of You",
+      "artist": "Ed Sheeran",
+      "spotify_url": "https://open.spotify.com/track/7qiZfU4dY1lWllzX7mPBI3"
+    },
+    {
+      "title": "Blinding Lights",
+      "artist": "The Weeknd",
+      "spotify_url": "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b"
+    },
+    {
+      "title": "Uptown Funk",
+      "artist": "Mark Ronson, Bruno Mars",
+      "spotify_url": "https://open.spotify.com/track/32OlwWuMpZ6b0aN2RZOeMS"
+    },
+    {
+      "title": "Gangnam Style",
+      "artist": "PSY",
+      "spotify_url": "https://open.spotify.com/track/03UrZgTINDqvnUMbbIMhql"
+    },
+    {
+      "title": "Waka Waka (This Time for Africa)",
+      "artist": "Shakira, Freshlyground",
+      "spotify_url": "https://open.spotify.com/track/774ZSrsLrIiYZjADBz9k4x"
+    },
+    {
+      "title": "See You Again",
+      "artist": "Wiz Khalifa, Charlie Puth",
+      "spotify_url": "https://open.spotify.com/track/2JzZzZUQj3Qff7wapcbKjc"
+    },
+    {
+      "title": "Counting Stars",
+      "artist": "OneRepublic",
+      "spotify_url": "https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1"
+    },
+    {
+      "title": "Party Rock Anthem",
+      "artist": "LMFAO, Lauren Bennett, GoonRock",
+      "spotify_url": "https://open.spotify.com/track/7mitXLIMCflkhZiD34uEQI"
+    },
+    {
+      "title": "Can’t Stop the Feeling!",
+      "artist": "Justin Timberlake",
+      "spotify_url": "https://open.spotify.com/track/1WkMMavIMc4JZ8cfMmxHkI"
+    },
+    {
+      "title": "Sorry",
+      "artist": "Justin Bieber",
+      "spotify_url": "https://open.spotify.com/track/09CtPGIpYB4BrO8qb1RGsF"
+    },
+    {
+      "title": "Get Lucky",
+      "artist": "Daft Punk, Pharrell Williams, Nile Rodgers",
+      "spotify_url": "https://open.spotify.com/track/69kOkLUCkxIZYexIgSG8rq"
+    },
+    {
+      "title": "Happy",
+      "artist": "Pharrell Williams",
+      "spotify_url": "https://open.spotify.com/track/60nZcImufyMA1MKQY3dcCH"
+    },
+    {
+      "title": "Lean On",
+      "artist": "Major Lazer, MØ, DJ Snake",
+      "spotify_url": "https://open.spotify.com/track/4vS8VaBwJJV5Ry7UFIQuoo"
+    },
+    {
+      "title": "We Found Love",
+      "artist": "Rihanna, Calvin Harris",
+      "spotify_url": "https://open.spotify.com/track/5uImkHXfTLkNYwemtGH7kB"
+    },
+    {
+      "title": "bad guy",
+      "artist": "Billie Eilish",
+      "spotify_url": "https://open.spotify.com/track/2Fxmhks0bxGSBdJ92vM42m"
+    },
+    {
+      "title": "Shake It Off",
+      "artist": "Taylor Swift",
+      "spotify_url": "https://open.spotify.com/track/5xTtaWoae3wi06K5WfVUUH"
+    },
+    {
+      "title": "Someone Like You",
+      "artist": "Adele",
+      "spotify_url": "https://open.spotify.com/track/4kflIGfjdZJW4ot2ioixTB"
+    },
+    {
+      "title": "Closer",
+      "artist": "The Chainsmokers, Halsey",
+      "spotify_url": "https://open.spotify.com/track/7BKLCZ1jbUBVqRi2FVlTVw"
+    },
+    {
+      "title": "Flowers",
+      "artist": "Miley Cyrus",
+      "spotify_url": "https://open.spotify.com/track/0yLdNVWF3Srea0uzk55zFn"
+    },
+    {
+      "title": "Señorita",
+      "artist": "Shawn Mendes, Camila Cabello",
+      "spotify_url": "https://open.spotify.com/track/6v3KW9xbzN5yKLt9YKDYA2"
+    },
+    {
+      "title": "Levitating",
+      "artist": "Dua Lipa",
+      "spotify_url": "https://open.spotify.com/track/39LLxExYz6ewLAcYrzQQyP"
+    },
+    {
+      "title": "As It Was",
+      "artist": "Harry Styles",
+      "spotify_url": "https://open.spotify.com/track/4LRPiXqCikLlN15c3yImP7"
+    },
+    {
+      "title": "Every Breath You Take",
+      "artist": "The Police",
+      "spotify_url": "https://open.spotify.com/track/1JSTJqkT5qHq8MDJnJbRE1"
+    },
+    {
+      "title": "In the End",
+      "artist": "Linkin Park",
+      "spotify_url": "https://open.spotify.com/track/60a0Rd6pjrkxjPbaKzXjfq"
+    },
+    {
+      "title": "Die With a Smile",
+      "artist": "Lady Gaga, Bruno Mars",
+      "spotify_url": "https://open.spotify.com/track/2plbrEY59IikOBgBGLjaoe"
+    }
+  ]
+}

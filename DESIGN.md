@@ -1,0 +1,9 @@
+# Faixa Oculta
+
+O visual parte da fotografia de um LP e do contraste dos cartazes de pista. Fundo carvão, texto em papel quente e laranja para ações e destaque. Archivo Black assina os títulos, Manrope atende o jogo e IBM Plex Mono é usado para tempo e pontuação.
+
+O início abre a configuração do Modo Misto. A meta combina atalhos de um toque e um campo numérico. No celular, o placar fica acima da rodada. Com várias equipes, os cartões deslizam na horizontal e o placar acompanha a equipe ativa. No desktop, o placar fica à esquerda em uma coluna. As cores distinguem as equipes e a ativa também recebe o selo “Na vez”.
+
+Após o palpite em voz alta, a resposta ocupa o lugar dos controles do Spotify. Dois controles lado a lado marcam os acertos. Ao confirmar a rodada, os pontos ganhos aparecem sobre o cartão da equipe e o total anima até o novo valor. As transições também sinalizam entrada de telas e abertura das regras. O movimento respeita a preferência do sistema.
+
+Trocar faixa e Usar poder dividem uma linha acima do botão da faixa. Durante a escuta, o botão lilás Usar poder abre um diálogo que identifica a equipe da vez como alvo. O DJ pode consultar o estoque mesmo quando todos os poderes estão aguardando outra vez. Para gastar um, ele escolhe a equipe, seleciona um poder disponível e confirma a aplicação. Quando o dobro está ativo, a rodada exibe um aviso e a revelação mostra os valores dobrados. Quando há uma segunda tentativa, a ação aparece ao lado da revelação. Os desafios de letra e instrumental trocam a ação principal e mostram ao DJ como conduzir a rodada. Na revelação com poderes ativos, marcar o acerto do título em até três segundos de áudio libera Sortear poder se a partida continuar. O painel de recompensa identifica a equipe, destaca o nome do poder e descreve seu efeito. O DJ avança quando terminar de ler.

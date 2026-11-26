@@ -1,0 +1,320 @@
+{
+  "name": "Clássicos BR",
+  "tracks": [
+    {
+      "title": "País Tropical",
+      "artist": "Jorge Ben Jor",
+      "spotify_url": "https://open.spotify.com/track/19oQkKJWFTN0NRozhayGzd"
+    },
+    {
+      "title": "O Descobridor dos Sete Mares",
+      "artist": "Tim Maia",
+      "spotify_url": "https://open.spotify.com/track/6wpDQGn3Gl0j9Wt6D6mYvQ"
+    },
+    {
+      "title": "Águas de Março",
+      "artist": "Elis Regina, Antônio Carlos Jobim",
+      "spotify_url": "https://open.spotify.com/track/26jlr0Ppqgu869qKK0GjR2"
+    },
+    {
+      "title": "Garota de Ipanema (The Girl from Ipanema)",
+      "artist": "Stan Getz, João Gilberto, Astrud Gilberto",
+      "spotify_url": "https://open.spotify.com/track/2IesH4nbYeJw16prFWIc3e"
+    },
+    {
+      "title": "Aquarela",
+      "artist": "Toquinho",
+      "spotify_url": "https://open.spotify.com/track/4LhxdvP3lfgH3ciOyO1BX1"
+    },
+    {
+      "title": "Velha Infância",
+      "artist": "Tribalistas",
+      "spotify_url": "https://open.spotify.com/track/0M3KZMohe0XeBl4kRuL9to"
+    },
+    {
+      "title": "Tempo Perdido",
+      "artist": "Legião Urbana",
+      "spotify_url": "https://open.spotify.com/track/7MnT7msJZg3XBAS0OTfGrB"
+    },
+    {
+      "title": "Exagerado",
+      "artist": "Cazuza",
+      "spotify_url": "https://open.spotify.com/track/4d0DpU7Odiv0ztvX2GxJlk"
+    },
+    {
+      "title": "Metamorfose Ambulante",
+      "artist": "Raul Seixas",
+      "spotify_url": "https://open.spotify.com/track/7qgSz0VNFaKKddKTOeBY29"
+    },
+    {
+      "title": "Anna Júlia",
+      "artist": "Los Hermanos",
+      "spotify_url": "https://open.spotify.com/track/14zHULg93hiSpMR71IzMs3"
+    },
+    {
+      "title": "Garota Nacional",
+      "artist": "Skank",
+      "spotify_url": "https://open.spotify.com/track/7DoBn08dqKS9MmtZiZChVD"
+    },
+    {
+      "title": "Só os Loucos Sabem",
+      "artist": "Charlie Brown Jr.",
+      "spotify_url": "https://open.spotify.com/track/1biFPE9oHuffATDhIECfNQ"
+    },
+    {
+      "title": "Cheia de Manias",
+      "artist": "Raça Negra",
+      "spotify_url": "https://open.spotify.com/track/5R8XzDagArO2BwLIrQJTPf"
+    },
+    {
+      "title": "Não Deixe o Samba Morrer",
+      "artist": "Alcione",
+      "spotify_url": "https://open.spotify.com/track/4UXoVtHnQ5ytOzwyZIx3GJ"
+    },
+    {
+      "title": "Deixa a Vida Me Levar",
+      "artist": "Zeca Pagodinho",
+      "spotify_url": "https://open.spotify.com/track/6N5KhYIaCvrjqxenxEdMln"
+    },
+    {
+      "title": "Tá Escrito",
+      "artist": "Grupo Revelação",
+      "spotify_url": "https://open.spotify.com/track/0rOQyLZJ9oASgtdoDZgrmK"
+    },
+    {
+      "title": "Trem das Onze",
+      "artist": "Demônios da Garoa",
+      "spotify_url": "https://open.spotify.com/track/51FIKxRyJDh2DEJgVmXd1y"
+    },
+    {
+      "title": "Evidências",
+      "artist": "Chitãozinho & Xororó",
+      "spotify_url": "https://open.spotify.com/track/1X95pCQG939KCbJL6yVQgw"
+    },
+    {
+      "title": "É o Amor",
+      "artist": "Zezé Di Camargo & Luciano",
+      "spotify_url": "https://open.spotify.com/track/3oMk1VNl1N7dgibHwHw1j2"
+    },
+    {
+      "title": "Pense em Mim",
+      "artist": "Leandro & Leonardo",
+      "spotify_url": "https://open.spotify.com/track/2Qk1PMwa835kv8KQMioMGG"
+    },
+    {
+      "title": "Boate Azul - Ao Vivo",
+      "artist": "Bruno & Marrone",
+      "spotify_url": "https://open.spotify.com/track/4Z20Nlp53CuArdsy0VbeTb"
+    },
+    {
+      "title": "Asa Branca",
+      "artist": "Luiz Gonzaga",
+      "spotify_url": "https://open.spotify.com/track/3wBLriR5Y0HTOX0dilmDON"
+    },
+    {
+      "title": "Anunciação",
+      "artist": "Alceu Valença",
+      "spotify_url": "https://open.spotify.com/track/51lTe7gCw9JeUnOlhi4EPc"
+    },
+    {
+      "title": "Esperando na Janela",
+      "artist": "Gilberto Gil",
+      "spotify_url": "https://open.spotify.com/track/35RlhfkfwbSI5dCBDBWIT0"
+    },
+    {
+      "title": "Garçom - Ao Vivo",
+      "artist": "Reginaldo Rossi",
+      "spotify_url": "https://open.spotify.com/track/7uH5gzGbWLVzgRkML9xrcl"
+    },
+    {
+      "title": "O Canto da Cidade",
+      "artist": "Daniela Mercury",
+      "spotify_url": "https://open.spotify.com/track/1n4ZZ9VPbTGMF2gEKAgCqD"
+    },
+    {
+      "title": "Sorte Grande",
+      "artist": "Ivete Sangalo",
+      "spotify_url": "https://open.spotify.com/track/3HjthaYkkRnLfuSY8APhIm"
+    },
+    {
+      "title": "Eva - Ao Vivo",
+      "artist": "Banda Eva",
+      "spotify_url": "https://open.spotify.com/track/53Dq7pZ0T3tubYno5yqwWF"
+    },
+    {
+      "title": "Rap da Felicidade",
+      "artist": "Cidinho & Doca",
+      "spotify_url": "https://open.spotify.com/track/5JEV2EMCTXB36mBKZlgxFg"
+    },
+    {
+      "title": "Cerol na Mão",
+      "artist": "Bonde do Tigrão",
+      "spotify_url": "https://open.spotify.com/track/3AZYWk2RaXnYBMbWvmInnc"
+    },
+    {
+      "title": "Glamurosa",
+      "artist": "MC Marcinho, DJ Marlboro",
+      "spotify_url": "https://open.spotify.com/track/50ySvgpqmS9W810GuKhrvD"
+    },
+    {
+      "title": "Só Love",
+      "artist": "Claudinho & Buchecha",
+      "spotify_url": "https://open.spotify.com/track/4GCckREf4hj1w50tcOSaFx"
+    },
+    {
+      "title": "Show das Poderosas",
+      "artist": "Anitta",
+      "spotify_url": "https://open.spotify.com/track/1lkbGJEGoM6tEnVqSDeizo"
+    },
+    {
+      "title": "Vai Malandra",
+      "artist": "Anitta, MC Zaac, Maejor, Tropkillaz, DJ Yuri Martins",
+      "spotify_url": "https://open.spotify.com/track/0sVTLYzBEM6nqEoQWixjdN"
+    },
+    {
+      "title": "Bum Bum Tam Tam",
+      "artist": "MC Fioti, Future, J Balvin, Stefflon Don, Juan Magán",
+      "spotify_url": "https://open.spotify.com/track/6k2900NjJeVqZM55G3Danu"
+    },
+    {
+      "title": "Baile de Favela",
+      "artist": "MC João",
+      "spotify_url": "https://open.spotify.com/track/6RvMVidQrwAh2VkXLIVfQn"
+    },
+    {
+      "title": "Olha a Explosão",
+      "artist": "MC Kevinho",
+      "spotify_url": "https://open.spotify.com/track/6Q4foUefrAyCt8VxJFML56"
+    },
+    {
+      "title": "Parado no Bailão",
+      "artist": "MC L da Vinte, MC Gury",
+      "spotify_url": "https://open.spotify.com/track/61lJXXqXC9XQzmrBRRdxeL"
+    },
+    {
+      "title": "Beijinho no Ombro",
+      "artist": "Valesca Popozuda",
+      "spotify_url": "https://open.spotify.com/track/4k3HBeh98WWN2ybGHC0WQI"
+    },
+    {
+      "title": "Dança do Créu",
+      "artist": "MC Créu, Furacão 2000",
+      "spotify_url": "https://open.spotify.com/track/3rSE4kfxP3Z0W3jDCK9Uy1"
+    },
+    {
+      "title": "Envolvimento",
+      "artist": "MC Loma e As Gêmeas Lacração",
+      "spotify_url": "https://open.spotify.com/track/1Wolb8MRcXR2IMMaELTRpE"
+    },
+    {
+      "title": "Dança da Motinha",
+      "artist": "Furacão 2000, Beth",
+      "spotify_url": "https://open.spotify.com/track/5oa7Hq1lJLUj3eX6SL88Vt"
+    },
+    {
+      "title": "Oceano",
+      "artist": "Djavan",
+      "spotify_url": "https://open.spotify.com/track/6Po0qCrlI1KT6DF2za1TzH"
+    },
+    {
+      "title": "Como Nossos Pais",
+      "artist": "Elis Regina",
+      "spotify_url": "https://open.spotify.com/track/2ZC8sdv4Kvuql7Q9T8Agzv"
+    },
+    {
+      "title": "Como Uma Onda (Zen-Surfismo)",
+      "artist": "Lulu Santos",
+      "spotify_url": "https://open.spotify.com/track/3Vdeu1v8yUreyQpdKheAqB"
+    },
+    {
+      "title": "Lança Perfume",
+      "artist": "Rita Lee, Roberto De Carvalho",
+      "spotify_url": "https://open.spotify.com/track/3cijWAljXxxJDco4N2aLQl"
+    },
+    {
+      "title": "Como É Grande o Meu Amor por Você",
+      "artist": "Roberto Carlos",
+      "spotify_url": "https://open.spotify.com/track/4cAbFTO7xttYgw6tStEQv3"
+    },
+    {
+      "title": "Tocando em Frente - Ao Vivo",
+      "artist": "Almir Sater",
+      "spotify_url": "https://open.spotify.com/track/7dc4iPrMtvqh5lvHa6tf9l"
+    },
+    {
+      "title": "Não Aprendi a Dizer Adeus",
+      "artist": "Leandro & Leonardo",
+      "spotify_url": "https://open.spotify.com/track/2snQCriGLUMVg5kqcVuXOX"
+    },
+    {
+      "title": "Tá Vendo Aquela Lua",
+      "artist": "Exaltasamba",
+      "spotify_url": "https://open.spotify.com/track/0qPRXoj2IzqH4khl33cU6A"
+    },
+    {
+      "title": "Essa Tal Liberdade",
+      "artist": "Só Pra Contrariar",
+      "spotify_url": "https://open.spotify.com/track/3EjxAbEOH28icEK1ZFOUSh"
+    },
+    {
+      "title": "Festa",
+      "artist": "Ivete Sangalo",
+      "spotify_url": "https://open.spotify.com/track/3ImdZHoYW2OFtAmEkzfVu3"
+    },
+    {
+      "title": "Tic, Tic, Tac",
+      "artist": "Carrapicho",
+      "spotify_url": "https://open.spotify.com/track/4GxaxPHZCuzbLBYvHac3j8"
+    },
+    {
+      "title": "Malandragem",
+      "artist": "Cássia Eller",
+      "spotify_url": "https://open.spotify.com/track/6Z4yEFutPJ73WLjkG4LTq8"
+    },
+    {
+      "title": "Sozinho - Ao Vivo",
+      "artist": "Caetano Veloso",
+      "spotify_url": "https://open.spotify.com/track/0pGuUW4oU6TaJLczQN7z2o"
+    },
+    {
+      "title": "Admirável Gado Novo - Ao Vivo",
+      "artist": "Zé Ramalho",
+      "spotify_url": "https://open.spotify.com/track/42g9pdAiWyxj1nK9ShGWOJ"
+    },
+    {
+      "title": "É uma Partida de Futebol",
+      "artist": "Skank",
+      "spotify_url": "https://open.spotify.com/track/0l9U8VZJTzoOCfF8fpKRyv"
+    },
+    {
+      "title": "Meu Erro",
+      "artist": "Os Paralamas do Sucesso",
+      "spotify_url": "https://open.spotify.com/track/2ItMXPZTLicy5piwdmu2HJ"
+    },
+    {
+      "title": "Taj Mahal",
+      "artist": "Jorge Ben Jor",
+      "spotify_url": "https://open.spotify.com/track/1bRFUgCNkmMfjBzubPn6E7"
+    },
+    {
+      "title": "Não Quero Dinheiro (Só Quero Amar)",
+      "artist": "Tim Maia",
+      "spotify_url": "https://open.spotify.com/track/5CHsQZqhGVhZ4OaQQqt1d7"
+    },
+    {
+      "title": "Deixa Acontecer",
+      "artist": "Grupo Revelação",
+      "spotify_url": "https://open.spotify.com/track/432xw0aJUhScag4BNKnNyu"
+    },
+    {
+      "title": "Eu Só Quero um Xodó - Ao Vivo",
+      "artist": "Dominguinhos, Liv Moraes",
+      "spotify_url": "https://open.spotify.com/track/68GAxUvva5i0nxYXGvGsbD"
+    },
+    {
+      "title": "Hino do Santos",
+      "artist": "Banda Gol",
+      "spotify_url": "https://open.spotify.com/track/6SIIAiKyiMzQHqc9lZyEpN"
+    }
+  ]
+}

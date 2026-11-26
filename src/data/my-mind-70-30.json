@@ -1,0 +1,788 @@
+{
+  "playlist": {
+    "name": "my mind",
+    "owner": "Felipe Sakai",
+    "spotify_url": "https://open.spotify.com/playlist/5tB8NlRXqnMo6pDehea3VW",
+    "track_count": 370
+  },
+  "sample_size": 100,
+  "curation": {
+    "date": "2026-11-26",
+    "popularity_source": "https://kworb.net/spotify/songs.html",
+    "verified_positions_considered": 175,
+    "famous_tracks": 70,
+    "variety_tracks": 30
+  },
+  "tracks": [
+    {
+      "original_position": 4,
+      "title": "Sweater Weather",
+      "artist": "The Neighbourhood",
+      "spotify_url": "https://open.spotify.com/track/2QjOHCTQ1Jl3zawyYOpxh6",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 5057620344
+    },
+    {
+      "original_position": 12,
+      "title": "I Wanna Be Yours",
+      "artist": "Arctic Monkeys",
+      "spotify_url": "https://open.spotify.com/track/5XeFesFbtLpXzIVDNQP22n",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 4134724156
+    },
+    {
+      "original_position": 15,
+      "title": "Riptide",
+      "artist": "Vance Joy",
+      "spotify_url": "https://open.spotify.com/track/7yq4Qj7cqayVTp3FF9CWbm",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 4028760310
+    },
+    {
+      "original_position": 68,
+      "title": "Believer",
+      "artist": "Imagine Dragons",
+      "spotify_url": "https://open.spotify.com/track/0pqnGHJpmpxLKifKRmU6WP",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 4025862850
+    },
+    {
+      "original_position": 87,
+      "title": "Heat Waves",
+      "artist": "Glass Animals",
+      "spotify_url": "https://open.spotify.com/track/3USxtqRwSYz57Ewm6wWRMp",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 4008706824
+    },
+    {
+      "original_position": 319,
+      "title": "Another Love",
+      "artist": "Tom Odell",
+      "spotify_url": "https://open.spotify.com/track/3JvKfv6T31zO0ini8iNItO",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 3785956531
+    },
+    {
+      "original_position": 64,
+      "title": "Take Me To Church",
+      "artist": "Hozier",
+      "spotify_url": "https://open.spotify.com/track/3dYD57lRAUcMHufyqn9GcI",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 3665342396
+    },
+    {
+      "original_position": 32,
+      "title": "Lucid Dreams",
+      "artist": "Juice WRLD",
+      "spotify_url": "https://open.spotify.com/track/285pBltuF7vW8TeWk8hdRR",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 3247079244
+    },
+    {
+      "original_position": 124,
+      "title": "Stressed Out",
+      "artist": "Twenty One Pilots",
+      "spotify_url": "https://open.spotify.com/track/3CRDbSIZ4r5MsZ0YwxuEkn",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 3246539097
+    },
+    {
+      "original_position": 11,
+      "title": "Do I Wanna Know?",
+      "artist": "Arctic Monkeys",
+      "spotify_url": "https://open.spotify.com/track/5FVd6KXrgO9B3JPmC8OPst",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 3237684936
+    },
+    {
+      "original_position": 125,
+      "title": "505",
+      "artist": "Arctic Monkeys",
+      "spotify_url": "https://open.spotify.com/track/0BxE4FqsDD1Ot4YuBXwAPp",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 3153299792
+    },
+    {
+      "original_position": 206,
+      "title": "There's Nothing Holdin' Me Back",
+      "artist": "Shawn Mendes",
+      "spotify_url": "https://open.spotify.com/track/7JJmb5XwzOO8jgpou264Ml",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 3081176253
+    },
+    {
+      "original_position": 86,
+      "title": "Save Your Tears",
+      "artist": "The Weeknd",
+      "spotify_url": "https://open.spotify.com/track/5QO79kh1waicV47BqGRL3g",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2914944490
+    },
+    {
+      "original_position": 2,
+      "title": "The Less I Know The Better",
+      "artist": "Tame Impala",
+      "spotify_url": "https://open.spotify.com/track/6K4t31amVTZDgR3sKmwUJJ",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2695204921
+    },
+    {
+      "original_position": 285,
+      "title": "Mockingbird",
+      "artist": "Eminem",
+      "spotify_url": "https://open.spotify.com/track/561jH07mF1jHuk7KlaeF0s",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2658460604
+    },
+    {
+      "original_position": 63,
+      "title": "XO Tour Llif3",
+      "artist": "Lil Uzi Vert",
+      "spotify_url": "https://open.spotify.com/track/7GX5flRQZVHRAGd6B4TmDO",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2625740298
+    },
+    {
+      "original_position": 67,
+      "title": "The Real Slim Shady",
+      "artist": "Eminem",
+      "spotify_url": "https://open.spotify.com/track/3yfqSUWxFvZELEM4PmlwIR",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2609192746
+    },
+    {
+      "original_position": 9,
+      "title": "Why'd You Only Call Me When You're High?",
+      "artist": "Arctic Monkeys",
+      "spotify_url": "https://open.spotify.com/track/086myS9r57YsLbJpU0TgK9",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2515852146
+    },
+    {
+      "original_position": 76,
+      "title": "Heathens",
+      "artist": "Twenty One Pilots",
+      "spotify_url": "https://open.spotify.com/track/6i0V12jOa3mr6uu4WYhUBr",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2376344516
+    },
+    {
+      "original_position": 96,
+      "title": "ocean eyes",
+      "artist": "Billie Eilish",
+      "spotify_url": "https://open.spotify.com/track/7hDVYcQq6MxkdJGweuCtl9",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2369927660
+    },
+    {
+      "original_position": 134,
+      "title": "Young And Beautiful",
+      "artist": "Lana Del Rey",
+      "spotify_url": "https://open.spotify.com/track/2nMeu6UenVvwUktBCpLMK9",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2360762039
+    },
+    {
+      "original_position": 81,
+      "title": "Talking to the Moon",
+      "artist": "Bruno Mars",
+      "spotify_url": "https://open.spotify.com/track/1wVuPmvt6AWvTL5W2GJnzZ",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2323467575
+    },
+    {
+      "original_position": 197,
+      "title": "Woman",
+      "artist": "Doja Cat",
+      "spotify_url": "https://open.spotify.com/track/6Uj1ctrBOjOas8xZXGqKk4",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2299069344
+    },
+    {
+      "original_position": 59,
+      "title": "MONTERO (Call Me By Your Name)",
+      "artist": "Lil Nas X",
+      "spotify_url": "https://open.spotify.com/track/3BZEcbdtXQSo7OrvKRJ6mb",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2228753451
+    },
+    {
+      "original_position": 62,
+      "title": "Mask Off",
+      "artist": "Future",
+      "spotify_url": "https://open.spotify.com/track/0VgkVdmE4gld66l8iyGjgx",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2166479709
+    },
+    {
+      "original_position": 19,
+      "title": "Stolen Dance",
+      "artist": "Milky Chance",
+      "spotify_url": "https://open.spotify.com/track/2jiPHbFX5XM8TjaTfYJ0eo",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2130396023
+    },
+    {
+      "original_position": 25,
+      "title": "Ransom",
+      "artist": "Lil Tecca",
+      "spotify_url": "https://open.spotify.com/track/1lOe9qE0vR9zwWQAOk6CoO",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2063881662
+    },
+    {
+      "original_position": 57,
+      "title": "High Hopes",
+      "artist": "Panic! At The Disco",
+      "spotify_url": "https://open.spotify.com/track/1rqqCSm0Qe4I9rUvWncaom",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 2055557753
+    },
+    {
+      "original_position": 286,
+      "title": "Revenge",
+      "artist": "XXXTENTACION",
+      "spotify_url": "https://open.spotify.com/track/5TXDeTFVRVY7Cvt0Dw4vWW",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1988512713
+    },
+    {
+      "original_position": 247,
+      "title": "Babydoll",
+      "artist": "Dominic Fike",
+      "spotify_url": "https://open.spotify.com/track/7yNf9YjeO5JXUE3JEBgnYc",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1973735576
+    },
+    {
+      "original_position": 165,
+      "title": "Happier Than Ever",
+      "artist": "Billie Eilish",
+      "spotify_url": "https://open.spotify.com/track/4RVwu0g32PAqgUiJoXsdF8",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1964741565
+    },
+    {
+      "original_position": 268,
+      "title": "Under The Influence",
+      "artist": "Chris Brown",
+      "spotify_url": "https://open.spotify.com/track/5IgjP7X4th6nMNDh4akUHb",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1958188534
+    },
+    {
+      "original_position": 309,
+      "title": "Shut up My Moms Calling",
+      "artist": "Hotel Ugly",
+      "spotify_url": "https://open.spotify.com/track/3hxIUxnT27p5WcmjGUXNwx",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1929283010
+    },
+    {
+      "original_position": 107,
+      "title": "telepatía",
+      "artist": "Kali Uchis",
+      "spotify_url": "https://open.spotify.com/track/6tDDoYIxWvMLTdKpjFkc1B",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1797078716
+    },
+    {
+      "original_position": 353,
+      "title": "Softcore",
+      "artist": "The Neighbourhood",
+      "spotify_url": "https://open.spotify.com/track/2K7xn816oNHJZ0aVqdQsha",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1794929584
+    },
+    {
+      "original_position": 100,
+      "title": "Good Days",
+      "artist": "SZA",
+      "spotify_url": "https://open.spotify.com/track/3YJJjQPAbDT7mGpX3WtQ9A",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1770949406
+    },
+    {
+      "original_position": 88,
+      "title": "Streets",
+      "artist": "Doja Cat",
+      "spotify_url": "https://open.spotify.com/track/60ynsPSSKe6O3sfwRnIBRf",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1699363178
+    },
+    {
+      "original_position": 84,
+      "title": "Centuries",
+      "artist": "Fall Out Boy",
+      "spotify_url": "https://open.spotify.com/track/04aAxqtGp5pv12UXAg4pkq",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1649902192
+    },
+    {
+      "original_position": 140,
+      "title": "Dog Days Are Over",
+      "artist": "Florence + The Machine",
+      "spotify_url": "https://open.spotify.com/track/456WNXWhDwYOSf5SpTuqxd",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1647471819
+    },
+    {
+      "original_position": 332,
+      "title": "I Had Some Help (Feat. Morgan Wallen)",
+      "artist": "Post Malone, Morgan Wallen",
+      "spotify_url": "https://open.spotify.com/track/7221xIgOnuakPdLqT0F3nP",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1643215217
+    },
+    {
+      "original_position": 136,
+      "title": "Video Games",
+      "artist": "Lana Del Rey",
+      "spotify_url": "https://open.spotify.com/track/24jvD83UgLmrdGjhWTFslY",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1528013855
+    },
+    {
+      "original_position": 52,
+      "title": "hot girl bummer",
+      "artist": "blackbear",
+      "spotify_url": "https://open.spotify.com/track/2mt1IqcFyY1zmYZT8Q3xw9",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1488295087
+    },
+    {
+      "original_position": 13,
+      "title": "R U Mine?",
+      "artist": "Arctic Monkeys",
+      "spotify_url": "https://open.spotify.com/track/2AT8iROs4FQueDv2c8q2KE",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1471894664
+    },
+    {
+      "original_position": 16,
+      "title": "Little Talks",
+      "artist": "Of Monsters and Men",
+      "spotify_url": "https://open.spotify.com/track/2ihCaVdNZmnHZWt0fvAM7B",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1469853299
+    },
+    {
+      "original_position": 99,
+      "title": "idontwannabeyouanymore",
+      "artist": "Billie Eilish",
+      "spotify_url": "https://open.spotify.com/track/41zXlQxzTi6cGAjpOXyLYH",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1430511496
+    },
+    {
+      "original_position": 272,
+      "title": "Atlantis",
+      "artist": "Seafret",
+      "spotify_url": "https://open.spotify.com/track/1Fid2jjqsHViMX6xNH70hE",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1424253163
+    },
+    {
+      "original_position": 79,
+      "title": "Runaway",
+      "artist": "AURORA",
+      "spotify_url": "https://open.spotify.com/track/1v1oIWf2Xgh54kIWuKsDf6",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1420599312
+    },
+    {
+      "original_position": 55,
+      "title": "What You Know Bout Love",
+      "artist": "Pop Smoke",
+      "spotify_url": "https://open.spotify.com/track/1tkg4EHVoqnhR6iFEXb60y",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1406633969
+    },
+    {
+      "original_position": 102,
+      "title": "bellyache",
+      "artist": "Billie Eilish",
+      "spotify_url": "https://open.spotify.com/track/51NFxnQvaosfDDutk0tams",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1306868965
+    },
+    {
+      "original_position": 90,
+      "title": "34+35",
+      "artist": "Ariana Grande",
+      "spotify_url": "https://open.spotify.com/track/6Im9k8u9iIzKMrmV7BWtlF",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1237928656
+    },
+    {
+      "original_position": 71,
+      "title": "My Boo",
+      "artist": "USHER, Alicia Keys",
+      "spotify_url": "https://open.spotify.com/track/68vgtRHr7iZHpzGpon6Jlo",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1218192925
+    },
+    {
+      "original_position": 56,
+      "title": "I Write Sins Not Tragedies",
+      "artist": "Panic! At The Disco",
+      "spotify_url": "https://open.spotify.com/track/5cY8y2XgOfkAh4kSWLFKkz",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1197646952
+    },
+    {
+      "original_position": 217,
+      "title": "Out of My League",
+      "artist": "Fitz and The Tantrums",
+      "spotify_url": "https://open.spotify.com/track/2Z5wXgysowvzl0nKGNGU0t",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1176903568
+    },
+    {
+      "original_position": 80,
+      "title": "Love Me Again",
+      "artist": "John Newman",
+      "spotify_url": "https://open.spotify.com/track/5TbzAWWc5eJaANpA9kfGCd",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1156016367
+    },
+    {
+      "original_position": 127,
+      "title": "Kiss Me Thru The Phone",
+      "artist": "Soulja Boy, Sammie",
+      "spotify_url": "https://open.spotify.com/track/2q4rjDy9WhaN3o9MvDbO21",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1101658246
+    },
+    {
+      "original_position": 23,
+      "title": "iSpy (feat. Lil Yachty)",
+      "artist": "KYLE, Lil Yachty",
+      "spotify_url": "https://open.spotify.com/track/2EEeOnHehOozLq4aS0n6SL",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1094513620
+    },
+    {
+      "original_position": 83,
+      "title": "House of Memories",
+      "artist": "Panic! At The Disco",
+      "spotify_url": "https://open.spotify.com/track/2DgdHcjWmO3qd50RzuBLgZ",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1079112177
+    },
+    {
+      "original_position": 53,
+      "title": "WITHOUT YOU",
+      "artist": "The Kid LAROI",
+      "spotify_url": "https://open.spotify.com/track/27OeeYzk6klgBh83TSvGMA",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1075732701
+    },
+    {
+      "original_position": 224,
+      "title": "you should see me in a crown",
+      "artist": "Billie Eilish",
+      "spotify_url": "https://open.spotify.com/track/3XF5xLJHOQQRbWya6hBp7d",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1068739347
+    },
+    {
+      "original_position": 70,
+      "title": "Billionaire (feat. Bruno Mars)",
+      "artist": "Travie McCoy, Bruno Mars",
+      "spotify_url": "https://open.spotify.com/track/2M9ULmQwTaTGmAdXaXpfz5",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1035472275
+    },
+    {
+      "original_position": 163,
+      "title": "Little Lion Man",
+      "artist": "Mumford & Sons",
+      "spotify_url": "https://open.spotify.com/track/2BBkIgdXLv5vyp1DR0wpQl",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1034804932
+    },
+    {
+      "original_position": 93,
+      "title": "watch",
+      "artist": "Billie Eilish",
+      "spotify_url": "https://open.spotify.com/track/7eB1V5LvAdxCc7brfGhRRo",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 1017563157
+    },
+    {
+      "original_position": 18,
+      "title": "Cradles",
+      "artist": "Sub Urban",
+      "spotify_url": "https://open.spotify.com/track/1y4jsQt7MjnZhiD1L6qFBC",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 999017640
+    },
+    {
+      "original_position": 28,
+      "title": "Ain't No Rest For The Wicked - Original Version",
+      "artist": "Cage The Elephant",
+      "spotify_url": "https://open.spotify.com/track/5c5a2Ptu8eyIpljhQHjIqk",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 993772605
+    },
+    {
+      "original_position": 89,
+      "title": "Calling My Phone",
+      "artist": "Lil Tjay, 6LACK",
+      "spotify_url": "https://open.spotify.com/track/5Kskr9LcNYa0tpt5f0ZEJx",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 982557588
+    },
+    {
+      "original_position": 31,
+      "title": "Prom Queen",
+      "artist": "Beach Bunny",
+      "spotify_url": "https://open.spotify.com/track/6MpCaSIOfqBqbMED4kXgNY",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 953600692
+    },
+    {
+      "original_position": 95,
+      "title": "wish you were gay",
+      "artist": "Billie Eilish",
+      "spotify_url": "https://open.spotify.com/track/3Fj47GNK2kUF0uaEDgXLaD",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 944466271
+    },
+    {
+      "original_position": 342,
+      "title": "Infrunami",
+      "artist": "Steve Lacy",
+      "spotify_url": "https://open.spotify.com/track/0f8eRy9A0n6zXpKSHSCAEp",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 898846637
+    },
+    {
+      "original_position": 54,
+      "title": "After Party",
+      "artist": "Don Toliver",
+      "spotify_url": "https://open.spotify.com/track/527k23H0A4Q0UJN3vGs0Da",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 890391320
+    },
+    {
+      "original_position": 47,
+      "title": "idfc",
+      "artist": "blackbear",
+      "spotify_url": "https://open.spotify.com/track/3SErMoIKdRELto2OspGs5L",
+      "selection_group": "famosas",
+      "global_streams_at_selection": 876148279
+    },
+    {
+      "original_position": 1,
+      "title": "Honeypie",
+      "artist": "JAWNY",
+      "spotify_url": "https://open.spotify.com/track/0rzWENXdfcLTgyt5DByGTy",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 5,
+      "title": "affection",
+      "artist": "BETWEEN FRIENDS",
+      "spotify_url": "https://open.spotify.com/track/2lTtnKQgjbrBA1qnOFhBkP",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 7,
+      "title": "CITY OF ANGELS",
+      "artist": "24kGoldn",
+      "spotify_url": "https://open.spotify.com/track/6ap9lSRJ0iLriGLqoJ44cq",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 21,
+      "title": "Oblivion",
+      "artist": "Grimes",
+      "spotify_url": "https://open.spotify.com/track/2RtNSM8cPCAOZ5bvQbW6y3",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 22,
+      "title": "Flaming Hot Cheetos",
+      "artist": "Clairo",
+      "spotify_url": "https://open.spotify.com/track/1F6IbA7di42uPc3cff8PXV",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 29,
+      "title": "Escape (The Pina Colada Song)",
+      "artist": "Rupert Holmes",
+      "spotify_url": "https://open.spotify.com/track/79Dl8iYn0PFQG2wqDxPlQU",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 30,
+      "title": "Birthday Suit",
+      "artist": "Cosmo Sheldrake",
+      "spotify_url": "https://open.spotify.com/track/598B9RU1jZhObFSQJhisIa",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 34,
+      "title": "Bossa No Sé (feat. Jean Carter)",
+      "artist": "Cuco, Jean Carter",
+      "spotify_url": "https://open.spotify.com/track/3kEsMLO3qUUwiXeCndsMIb",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 35,
+      "title": "New Flesh",
+      "artist": "Current Joys",
+      "spotify_url": "https://open.spotify.com/track/6TEiFwaiHERpdfG6WnGed1",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 40,
+      "title": "Weak",
+      "artist": "AJR",
+      "spotify_url": "https://open.spotify.com/track/3BuLtAmXKy5uQYl4ED1zBT",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 41,
+      "title": "Strangers",
+      "artist": "Sigrid",
+      "spotify_url": "https://open.spotify.com/track/3CWuU5kIw8zsWJTcgreUwl",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 46,
+      "title": "Cigarettes On Patios",
+      "artist": "BabyJake",
+      "spotify_url": "https://open.spotify.com/track/0LJDFZohBgWOMvXQw0cc9W",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 65,
+      "title": "Sweet Dreams (A cappella)",
+      "artist": "Holly Henry",
+      "spotify_url": "https://open.spotify.com/track/5x3loh99130Pw196zqm0dj",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 75,
+      "title": "Snake",
+      "artist": "Lil Keed",
+      "spotify_url": "https://open.spotify.com/track/3wdnX9UwfyXkNq0FJVhQQD",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 92,
+      "title": "Gimme Love",
+      "artist": "Joji",
+      "spotify_url": "https://open.spotify.com/track/5jSBnH9NyaNP5zdSB3pwgu",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 106,
+      "title": "Dangerous",
+      "artist": "Kardinal Offishall, Akon",
+      "spotify_url": "https://open.spotify.com/track/4NOZ35Dhucr6UlVyLOtktd",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 139,
+      "title": "Cupid's Chokehold / Breakfast in America",
+      "artist": "Gym Class Heroes",
+      "spotify_url": "https://open.spotify.com/track/2Lhdl74nwwVGOE2Gv35QuK",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 141,
+      "title": "Spectrum (Say My Name) - Calvin Harris Remix",
+      "artist": "Florence + The Machine, Calvin Harris",
+      "spotify_url": "https://open.spotify.com/track/57yeWyaoeTt26p0dlEZukQ",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 157,
+      "title": "Dinero",
+      "artist": "Trinidad Cardona",
+      "spotify_url": "https://open.spotify.com/track/3ggtU1ZOKO8ZNiqPNyXGcm",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 178,
+      "title": "CORALINE",
+      "artist": "Måneskin",
+      "spotify_url": "https://open.spotify.com/track/7HMz8o0m7ASQ3ImFPfhWTY",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 213,
+      "title": "Hayloft",
+      "artist": "Mother Mother",
+      "spotify_url": "https://open.spotify.com/track/2kS6td1yvmpNgZTt1q5pQq",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 229,
+      "title": "Taro",
+      "artist": "alt-J",
+      "spotify_url": "https://open.spotify.com/track/36ylLzMtvJ2CItc7bN4TcF",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 236,
+      "title": "Kilby Girl",
+      "artist": "The Backseat Lovers",
+      "spotify_url": "https://open.spotify.com/track/1170VohRSx6GwE6QDCHPPH",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 240,
+      "title": "Gooey",
+      "artist": "Glass Animals",
+      "spotify_url": "https://open.spotify.com/track/1gk3FhAV07q9Jg77UxnVjX",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 261,
+      "title": "Novocaine",
+      "artist": "The Unlikely Candidates",
+      "spotify_url": "https://open.spotify.com/track/4GKcaqt6PFor4siHXMO42e",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 270,
+      "title": "A Kiss",
+      "artist": "THE DRIVER ERA",
+      "spotify_url": "https://open.spotify.com/track/2dW3ZWlCrV4T1SBR1u1ttz",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 282,
+      "title": "Old Town Road (feat. Billy Ray Cyrus) - Remix",
+      "artist": "Lil Nas X, Billy Ray Cyrus",
+      "spotify_url": "https://open.spotify.com/track/2YpeDb67231RjR0MgVLzsG",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 300,
+      "title": "Black Sheep - Brie Larson Vocal Version",
+      "artist": "Metric, Brie Larson",
+      "spotify_url": "https://open.spotify.com/track/60TThBDrPpek5k520l0W0L",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 321,
+      "title": "United In Grief",
+      "artist": "Kendrick Lamar",
+      "spotify_url": "https://open.spotify.com/track/5Gt9bxniM1SxN61yRzRhXL",
+      "selection_group": "variadas"
+    },
+    {
+      "original_position": 367,
+      "title": "Golden Brown",
+      "artist": "The Stranglers",
+      "spotify_url": "https://open.spotify.com/track/5GpfyJrKHJI36jDKtQiyGN",
+      "selection_group": "variadas"
+    }
+  ]
+}

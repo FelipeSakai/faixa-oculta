@@ -1,0 +1,131 @@
+{
+  "playlist": {
+    "name": "Minha playlist nº 5 ⑤⒌",
+    "owner": "Júnior Rego",
+    "spotify_url": "https://open.spotify.com/playlist/1L5FS5zUrDX9oOMOq6Unsn",
+    "track_count": 68,
+    "snapshot_date": "2026-11-26"
+  },
+  "tracks": [
+    {
+      "original_position": 1,
+      "title": "505",
+      "artist": "Arctic Monkeys",
+      "spotify_url": "https://open.spotify.com/track/0BxE4FqsDD1Ot4YuBXwAPp"
+    },
+    {
+      "original_position": 2,
+      "title": "Black Hole Sun",
+      "artist": "Soundgarden",
+      "spotify_url": "https://open.spotify.com/track/2EoOZnxNgtmZaD8uUmz2nD"
+    },
+    {
+      "original_position": 5,
+      "title": "Pumped Up Kicks",
+      "artist": "Foster The People",
+      "spotify_url": "https://open.spotify.com/track/7w87IxuO7BDcJ3YUqCyMTT"
+    },
+    {
+      "original_position": 6,
+      "title": "Take Me Out",
+      "artist": "Franz Ferdinand",
+      "spotify_url": "https://open.spotify.com/track/6ooluO7DiEhI1zmK94nRCM"
+    },
+    {
+      "original_position": 8,
+      "title": "Roxanne",
+      "artist": "The Police",
+      "spotify_url": "https://open.spotify.com/track/3EYOJ48Et32uATr9ZmLnAo"
+    },
+    {
+      "original_position": 11,
+      "title": "Wish You Were Here",
+      "artist": "Pink Floyd",
+      "spotify_url": "https://open.spotify.com/track/6mFkJmJqdDVQ1REhVfGgd1"
+    },
+    {
+      "original_position": 12,
+      "title": "Creep",
+      "artist": "Radiohead",
+      "spotify_url": "https://open.spotify.com/track/70LcF31zb1H0PyJoS1Sx1r"
+    },
+    {
+      "original_position": 14,
+      "title": "Feel Good Inc.",
+      "artist": "Gorillaz, De La Soul",
+      "spotify_url": "https://open.spotify.com/track/0d28khcov6AiegSCpG5TuT"
+    },
+    {
+      "original_position": 20,
+      "title": "Instant Crush (feat. Julian Casablancas)",
+      "artist": "Daft Punk, Julian Casablancas",
+      "spotify_url": "https://open.spotify.com/track/2cGxRwrMyEAp8dEbuZaVv6"
+    },
+    {
+      "original_position": 23,
+      "title": "Scar Tissue",
+      "artist": "Red Hot Chili Peppers",
+      "spotify_url": "https://open.spotify.com/track/1G391cbiT3v3Cywg8T7DM1"
+    },
+    {
+      "original_position": 25,
+      "title": "Stressed Out",
+      "artist": "Twenty One Pilots",
+      "spotify_url": "https://open.spotify.com/track/3CRDbSIZ4r5MsZ0YwxuEkn"
+    },
+    {
+      "original_position": 37,
+      "title": "Heart-Shaped Box",
+      "artist": "Nirvana",
+      "spotify_url": "https://open.spotify.com/track/11LmqTE2naFULdEP94AUBa"
+    },
+    {
+      "original_position": 39,
+      "title": "Under the Bridge",
+      "artist": "Red Hot Chili Peppers",
+      "spotify_url": "https://open.spotify.com/track/3d9DChrdc6BOeFsbrZ3Is0"
+    },
+    {
+      "original_position": 40,
+      "title": "Wonderwall - Remastered",
+      "artist": "Oasis",
+      "spotify_url": "https://open.spotify.com/track/5qqabIl2vWzo9ApSC317sa"
+    },
+    {
+      "original_position": 43,
+      "title": "Mr. Brightside",
+      "artist": "The Killers",
+      "spotify_url": "https://open.spotify.com/track/003vvx7Niy0yvhvHt4a68B"
+    },
+    {
+      "original_position": 46,
+      "title": "Where Is My Mind?",
+      "artist": "Pixies",
+      "spotify_url": "https://open.spotify.com/track/0KzAbK6nItSqNh8q70tb0K"
+    },
+    {
+      "original_position": 52,
+      "title": "Numb / Encore",
+      "artist": "JAŸ-Z, Linkin Park",
+      "spotify_url": "https://open.spotify.com/track/7dyluIqv7QYVTXXZiMWPHW"
+    },
+    {
+      "original_position": 55,
+      "title": "Sign of the Times",
+      "artist": "Harry Styles",
+      "spotify_url": "https://open.spotify.com/track/5Ohxk2dO5COHF1krpoPigN"
+    },
+    {
+      "original_position": 58,
+      "title": "In the Air Tonight - 2015 Remaster",
+      "artist": "Phil Collins",
+      "spotify_url": "https://open.spotify.com/track/18AXbzPzBS8Y3AkgSxzJPb"
+    },
+    {
+      "original_position": 66,
+      "title": "Don't Let Me Down - Remastered 2009",
+      "artist": "The Beatles",
+      "spotify_url": "https://open.spotify.com/track/3evG0BIqEFMMP7lVJh1cSf"
+    }
+  ]
+}
