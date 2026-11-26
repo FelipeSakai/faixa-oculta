@@ -33,7 +33,7 @@ O contador mostra as faixas únicas. Uma música compartilhada continua no sorte
 - **Flashback**, do Matchola, tem 20 faixas na seleção do jogo, entre elas “Seven Nation Army”, “Beat It” e “Zombie”. [Playlist no Spotify](https://open.spotify.com/playlist/1iOmgAZwXihxZqamYmALPF)
 - **PLAYLIST ANTIDEPRESSIVA**, da Yaschan, tem 18 faixas no jogo, entre elas “Timber”, “Break Free” e “Tears Dry On Their Own”. [Playlist no Spotify](https://open.spotify.com/playlist/64PYrXeE4lwN8ZVGuoAr29)
 - **2028**, da Bela, traz 20 faixas para o jogo, entre elas “Paparazzi”, “Skyfall” e “Good Luck, Babe!”. [Playlist no Spotify](https://open.spotify.com/playlist/7c9CclMaw2Tsb4lgl0j1hM)
-- **Number 2 (Valota)** reúne uma seleção de “Suas músicas mais ouvidas de sempre”, incluindo “Máquina do Tempo”, “Amiga Da Minha Mulher” e “Meu Pedaço de Pecado”. [Playlist no Spotify](https://open.spotify.com/playlist/37i9dQZF1CL6FazTRh4bdS)
+- **Number 2 (Valota)** reúne 48 faixas de “Suas músicas mais ouvidas de sempre”, entre elas “Gorilla Roxo”, “4 Estações” e “Meu Pedaço de Pecado”. [Playlist no Spotify](https://open.spotify.com/playlist/37i9dQZF1CL6FazTRh4bdS)
 - **Clássicos BR** reúne 63 faixas de MPB, bossa nova, rock nacional, samba, pagode, sertanejo, forró, brega, axé e funk, incluindo o Hino do Santos na versão da Banda Gol. Os links de cada gravação ficam em `src/data/classicos-br.json`.
 - **Clássicos Internacionais** reúne 58 faixas entre pop, rock, disco, rap, eletrônica e hits latinos. Os links de cada gravação ficam em `src/data/classicos-internacionais.json`.
 
