@@ -6,6 +6,7 @@ import junior from './data/junior-playlist-5.json' with { type: 'json' };
 import matchola from './data/matchola-flashback.json' with { type: 'json' };
 import yaschan from './data/yaschan-antidepressiva.json' with { type: 'json' };
 import bela from './data/bela-2028.json' with { type: 'json' };
+import valota from './data/valota-number-2.json' with { type: 'json' };
 import classics from './data/classicos-br.json' with { type: 'json' };
 import internationalClassics from './data/classicos-internacionais.json' with { type: 'json' };
 
@@ -17,12 +18,13 @@ const collections = [
   { id: 'matchola', label: matchola.playlist.name, person: matchola.playlist.owner, tracks: matchola.tracks },
   { id: 'yaschan', label: yaschan.playlist.name, person: yaschan.playlist.owner, tracks: yaschan.tracks },
   { id: 'bela', label: bela.playlist.name, person: bela.playlist.owner, tracks: bela.tracks },
+  { id: 'valota', label: valota.playlist.name, person: valota.playlist.listener, displayLabel: valota.playlist.game_label, tracks: valota.tracks },
   { id: 'classicos-br', label: classics.name, tracks: classics.tracks },
   { id: 'classicos-internacionais', label: internationalClassics.name, tracks: internationalClassics.tracks },
 ];
 
-export const originLabels = Object.fromEntries(collections.map(({ id, label, person }) =>
-  [id, person ? label + ' · ' + person : label]
+export const originLabels = Object.fromEntries(collections.map(({ id, label, person, displayLabel }) =>
+  [id, displayLabel ?? (person ? label + ' · ' + person : label)]
 ));
 export const allOriginIds = [
   ...collections.filter(collection => collection.person),
