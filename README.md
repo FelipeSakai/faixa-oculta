@@ -6,7 +6,7 @@ Em **Equipes**, adicione quantas equipes precisar e dê um nome a cada uma, se q
 
 Cada equipe começa com uma troca grátis, inclusive no solo. O número em **Trocar faixa** soma a troca grátis e os pulos que a equipe ganhou. Se a faixa já foi aberta e a troca grátis ainda está disponível, o botão usa a grátis primeiro. Os pulos ganhos podem ser usados no mesmo botão até antes de abrir a faixa. Cada toque troca uma música e desconta um pulo. A equipe continua na vez.
 
-Novas partidas começam com **Poderes** ligados. Você pode desligá-los na configuração ou tocar em **Ativar poderes** durante a escuta de uma partida que começou com eles desligados. Se o DJ marcar um acerto de título em até 3 segundos de áudio e a partida continuar, toque em **Sortear poder** para ver a equipe, o nome do poder e seu efeito. A recompensa já está guardada e fica na tela até o DJ tocar em **Próxima rodada**. Em equipes podem sair dez poderes. No solo podem sair os seis de uso próprio, incluindo as três dicas.
+Novas partidas começam com **Poderes** ligados. Você pode desligá-los na configuração ou tocar em **Ativar poderes** durante a escuta de uma partida que começou com eles desligados. Se o DJ marcar um acerto de título em até 3 segundos de áudio e a partida continuar, toque em **Sortear poder** para ver a equipe, o nome do poder e seu efeito. A recompensa já está guardada e fica na tela até o DJ tocar em **Próxima rodada**. Em equipes podem sair onze poderes. No solo podem sair os seis de uso próprio, incluindo as três dicas.
 
 Durante a escuta, **Usar poder** abre os poderes guardados pelas equipes e indica quando cada um pode ser usado. Selecione a equipe, escolha o poder e confirme em **Aplicar poder**. Antes de o DJ abrir a pista, qualquer equipe adversária pode gastar um ataque. A equipe da vez recebe o efeito imediatamente e continua jogando. Cada rodada admite um ataque.
 
@@ -14,6 +14,7 @@ Durante a escuta, **Usar poder** abre os poderes guardados pelas equipes e indic
 - **Só um responde** permite à equipe que atacou indicar, em voz alta, quem dará o palpite pela rival.
 - **Só a letra** pede ao DJ que leia um trecho da letra sem revelar o título.
 - **Sem vocal** mostra o botão **Buscar instrumental** para o DJ escolher uma versão instrumental ou de karaokê.
+- **Rebote** permite que uma rival dê outro palpite depois do palpite final da equipe da vez. Com a faixa aberta, o DJ escolhe a rival em **Usar poder** e aplica **Rebote** antes de revelar. Cabe um por rodada. Com os palpites fechados, o DJ revela a resposta. Se a equipe da vez errar o título e a rival acertar, marque o rebote para dar **1 ponto à rival**, inclusive quando o dobro estiver ativo. O bônus de playlist continua com a equipe da vez. Se as duas atingirem a meta juntas, a equipe da vez vence.
 - **Duas tentativas** é um poder da própria equipe. Ela pode ativá-lo antes de revelar, inclusive quando recebeu um ataque. O botão **2º palpite** libera a nova tentativa. Esse poder também funciona no solo.
 - Ao sair **Pular música** no sorteio, **Trocar faixa** recebe automaticamente mais um pulo para a equipe premiada. É nesse botão que ela usa os pulos, inclusive vários na mesma rodada enquanto houver outra faixa no baralho. O dobro ou a segunda tentativa continuam valendo na nova faixa.
 - **Vale o dobro** pode ser usado na vez da própria equipe, antes de abrir a faixa. O título passa a valer 4 pontos. Se houver bônus de playlist pessoal, ele vale 2. A equipe escolhe entre **Vale o dobro** e **Duas tentativas** em cada rodada. Nas partidas salvas antes desta mudança, o dobro que a equipe ainda tinha fica guardado em **Usar poder**.
@@ -24,7 +25,7 @@ Na própria vez, a equipe pode gastar **uma dica por rodada** antes de revelar a
 - **Iniciais do título** mostra a primeira letra de cada palavra. Para *Smells Like Teen Spirit*, a equipe vê *S · L · T · S*.
 - **Pular pro refrão** pede ao DJ que avance manualmente até o refrão da mesma música. Se houver um ataque, o DJ segue a regra dele também.
 
-O treino pode ser aberto pelo endereço do jogo com `#teste-poderes` no final. Ele começa na vez da Equipe 2, que já tem as três dicas guardadas. A Equipe 4 também tem ataques para experimentar.
+O treino pode ser aberto pelo endereço do jogo com `#teste-poderes` no final. Ele começa na vez da Equipe 2, que já tem as três dicas guardadas. A Equipe 4 também tem ataques e um Rebote. Para testar o Rebote, toque em **Simular faixa**, escolha a Equipe 4 em **Usar poder** e revele os palpites.
 
 ## Seleções
 
@@ -65,7 +66,7 @@ npm run dev
 
 O jogo grava a ordem das músicas, as origens habilitadas para cada faixa e a configuração uma vez por partida no `localStorage`. Cada jogada atualiza um registro pequeno com o progresso. Ao voltar ao mesmo endereço no mesmo perfil, escolha **Continuar partida**. Partidas da versão anterior são convertidas na retomada, usando a ordem, as faixas e o placar já salvos. Depois do fim, **Ver resultado** recupera o placar final.
 
-No placar, **Corrigir última rodada** permite ajustar os acertos da música e, quando disponível, o bônus da playlist pessoal. A correção mantém o multiplicador da rodada e o poder que já saiu, mesmo que a equipe já o tenha usado. Se o novo placar mudar quem atingiu a meta, o jogo atualiza o resultado ou retoma a partida.
+No placar, **Corrigir última rodada** permite ajustar os acertos da música e, quando disponível, o bônus da playlist pessoal e o resultado de um rebote. A correção mantém o multiplicador da rodada e o poder que já saiu, mesmo que a equipe já o tenha usado. Se o novo placar mudar quem atingiu a meta, o jogo atualiza o resultado ou retoma a partida.
 
 O botão **Nova partida** abre a configuração e pede confirmação antes de substituir uma partida em andamento. Limpar os dados do site, trocar de navegador, mudar de endereço ou encerrar uma sessão privada pode tirar o acesso ao salvamento. Se o navegador bloquear a gravação, o jogo avisa e continua na aba aberta.
 

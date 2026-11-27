@@ -201,7 +201,7 @@ test('solo preserva a segunda tentativa e o placar final', () => {
 
 test('as opções de recompensa obedecem ao formato e aos poderes habilitados', () => {
   const game = newMatch().game;
-  assert.deepEqual(availablePowerIds(game), ['tenSeconds', 'oneGuesser', 'readLyrics', 'instrumental', ...ownPowerIds]);
+  assert.deepEqual(availablePowerIds(game), ['tenSeconds', 'oneGuesser', 'readLyrics', 'instrumental', ...ownPowerIds, 'rebound']);
   assert.deepEqual(availablePowerIds(newMatch(['Você']).game), ownPowerIds);
   assert.deepEqual(availablePowerIds({ ...game, powersEnabled: false }), []);
 });
@@ -727,7 +727,7 @@ test('rejeita alvo fora da vez, equipe inválida, ataque após a pista e poder i
     assert.equal(gameReducer(current, attack), current);
   }
   const opened = gameReducer(game, { type: 'openTrack' });
-  assert.deepEqual(usablePowerIds(opened, 3), []);
+  assert.deepEqual(usablePowerIds(opened, 3), ['rebound']);
   assert.deepEqual(usablePowerIds(opened, 0), ['secondGuess', 'skipTrack', ...hintIds]);
   assert.equal(gameReducer(opened, attack), opened);
   for (const id of usablePowerIds(game, 3)) game.teams[3].powers[id] = 0;

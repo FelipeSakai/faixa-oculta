@@ -42,8 +42,8 @@ function ScoreAward({ points }) {
 export function Scoreboard({ players, scores, active, winner, goal, award, children }) {
   const listRef = useRef(null);
   const many = players.length > 2;
-  const highlighted = winner ?? active;
-  const awardedTeam = award?.team;
+  const awardedTeam = award?.reboundPoints ? award.reboundTeam : award?.team;
+  const highlighted = winner ?? awardedTeam ?? active;
 
   useLayoutEffect(() => {
     if (!many || highlighted === null) return;
@@ -85,7 +85,8 @@ export function Scoreboard({ players, scores, active, winner, goal, award, child
             {players.length > 1 && active === index && <span className="score-turn">Na vez</span>}
             {players.length > 1 && winner === index && <span className="score-turn">Venceu</span>}
             <ScoreNumber value={scores[index]} />
-            {award?.team === index && <ScoreAward points={award.points} />}
+            {award?.team === index && award.points > 0 && <ScoreAward points={award.points} />}
+            {award?.reboundTeam === index && award.reboundPoints > 0 && <ScoreAward points={award.reboundPoints} />}
           </div>
         ))}
       </div>

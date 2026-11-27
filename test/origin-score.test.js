@@ -21,7 +21,7 @@ test('só as playlists pessoais selecionadas da faixa habilitam o ponto de orige
     const expected = people.length ? 1 : 0;
     assert.deepEqual(new Set(getRound(marked).personalOrigins), new Set(people));
     assert.equal(getRound(marked).originPoints, expected);
-    assert.deepEqual(marked.marks, { title: false, origin: Boolean(expected), fast: false });
+    assert.deepEqual(marked.marks, { title: false, origin: Boolean(expected), fast: false, rebound: false });
     assert.equal(gameReducer(marked, { type: 'score', skipAnimation: true }).teams[0].score, expected);
     const onlyTitle = gameReducer(reveal, markTitle);
     assert.equal(gameReducer(onlyTitle, { type: 'score', skipAnimation: true }).teams[0].score, 2);

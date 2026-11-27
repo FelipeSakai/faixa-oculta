@@ -169,7 +169,7 @@ test('uma origem geral marcada antes de confirmar a rodada sai da pontuação ao
   game.marks = { title: true, origin: true, fast: false };
   const disk = storageWith(game, 2);
   const restored = createMatchStore(() => disk).getSnapshot().match.game;
-  assert.deepEqual(restored.marks, { title: true, origin: false, fast: false });
+  assert.deepEqual(restored.marks, { title: true, origin: false, fast: false, rebound: false });
   assert.equal(restored.teams[0].score, 5);
   const next = gameReducer(restored, { type: 'score', skipAnimation: true });
   assert.equal(next.teams[0].score, 7);

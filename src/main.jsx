@@ -86,6 +86,7 @@ function Rules({ dialogRef, deck }) {
           <li><strong>Escolha qual poder usar.</strong><span>Toque em Usar poder, escolha a equipe e o poder que ela vai gastar. Para atacar uma rival, use antes de abrir a pista. Cabe um ataque por rodada.</span></li>
           <li><strong>Poderes da sua equipe.</strong><span>Escolha entre Vale o dobro e Duas tentativas a cada rodada. Ative o dobro antes de abrir a faixa ou use Duas tentativas para fazer outro palpite.</span></li>
           <li><strong>Uma dica por rodada.</strong><span>Na sua vez, escolha uma dica em Usar poder antes de revelar. Se trocar de faixa, a dica continua gasta.</span></li>
+          <li><strong>Rebote.</strong><span>Depois do palpite final da equipe da vez, uma rival pode gastar o Rebote e dizer outro título antes de revelar. Se só a rival acertar o título, ganha 1 ponto.</span></li>
         </ol>
         <button className="button button-primary full-width" onClick={() => dialogRef.current.close()}>Entendi <ArrowRight size={20} /></button>
       </div>
@@ -333,15 +334,18 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
   const { team, turn, canSwap, canRetry, remainingSkips } = round;
   const powerNotice = game.notice?.power === 'skipTrack' ? null : game.notice;
   const activeHint = game.hint?.trackIndex === game.trackIndex ? game.hint.power : null;
+  const hasRebound = game.reboundTeam != null;
   const target = players[(turn + 1) % players.length];
 
   useLayoutEffect(() => {
-    if (canRetry) {
+    if (hasRebound) {
+      revealButton.current?.focus({ preventScroll: true });
+    } else if (canRetry) {
       retryButton.current?.focus({ preventScroll: true });
     } else if (practice && !game.opened && (game.effect || game.retry || game.powerSkipped || game.doubled || activeHint)) {
       trackLink.current?.focus({ preventScroll: true });
     }
-  }, [canRetry, practice, game.opened, game.effect, game.retry, game.powerSkipped, game.doubled, activeHint]);
+  }, [canRetry, practice, game.opened, game.effect, game.retry, game.powerSkipped, game.doubled, activeHint, hasRebound]);
 
   return (
     <section className="player" aria-label="Faixa da rodada">
@@ -364,12 +368,12 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
           </button>
           {game.powersEnabled ? <PowerUse key={game.round} game={game} turn={turn} players={players} onUse={action => {
             dispatch(action);
-            trackLink.current?.focus({ preventScroll: true });
+            if (action.power !== 'rebound') trackLink.current?.focus({ preventScroll: true });
           }} /> : <button type="button" className="bonus-button" onClick={() => dispatch({ type: 'enablePowers' })}>
             <Zap size={16} aria-hidden="true" /> Ativar poderes
           </button>}
         </div>
-        {(game.effect || game.nextEffect || powerNotice || game.retry || game.powerSkipped || game.doubled || activeHint) && (
+        {(game.effect || game.nextEffect || powerNotice || game.retry || game.powerSkipped || game.doubled || activeHint || hasRebound) && (
           <div className="round-notices" role="status">
             {game.effect && <div className="applied-power">
               <strong><Zap size={15} aria-hidden="true" />
@@ -388,10 +392,11 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
             {game.powerSkipped && <span><Shuffle size={14} aria-hidden="true" /> Música pulada. A vez continua com {players[turn]}.</span>}
             {powerNotice && <span><Zap size={14} aria-hidden="true" /> {players.length === 1 ? 'Você ganhou' : players[powerNotice.team] + ' ganhou'}: {powers[powerNotice.power].name}</span>}
             {activeHint && <p className="round-hint"><strong>{powers[activeHint].name}</strong> · {roundHintText(activeHint, track, game.effect)}</p>}
+            {hasRebound && <p className="round-hint"><strong>Rebote · {players[game.reboundTeam]}</strong> dá um palpite diferente antes da revelação.</p>}
           </div>
         )}
         {practice ? (
-          (game.effect || game.retry || game.powerSkipped || game.doubled || activeHint || team.powers.skipTrack > 0) && <button ref={trackLink} className="button button-primary full-width" disabled={game.opened}
+          (game.effect || game.retry || game.powerSkipped || game.doubled || activeHint || team.powers.skipTrack > 0 || game.teams.some(t => t.powers.rebound > 0)) && <button ref={trackLink} className="button button-primary full-width" disabled={game.opened}
             onClick={() => dispatch({ type: 'openTrack' })}>
             {game.opened ? 'Pista simulada' : game.effect === 'readLyrics' ? 'Simular leitura' : game.effect === 'instrumental' ? 'Simular instrumental' : 'Simular faixa'}
             {game.opened ? <Check size={19} /> : <Play size={19} />}
@@ -408,7 +413,7 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
               revealButton.current?.focus({ preventScroll: true });
             }}><RotateCcw size={15} aria-hidden="true" /> 2º palpite</button>
           )}
-          {!practice && <button ref={revealButton} className="button button-neutral full-width" aria-label="Revelar resposta" onClick={() => dispatch({ type: 'reveal' })}>
+          {(!practice || hasRebound) && <button ref={revealButton} className="button button-neutral full-width" aria-label="Revelar resposta" onClick={() => dispatch({ type: 'reveal' })}>
             {canRetry ? 'Revelar' : 'Revelar resposta'} <ArrowRight size={19} />
           </button>}
         </div>
@@ -428,17 +433,26 @@ function MarkChoice({ title, label = title, points, checked, disabled, onChange 
   );
 }
 
-function RoundCorrection({ record, track, teamName, dispatch }) {
+function ReboundChoice({ teamName, checked, disabled, onChange }) {
+  return (
+    <div className="rebound-choice">
+      <MarkChoice title={'Rebote · ' + teamName} label={teamName + ' acertou o rebote'} points={1}
+        checked={Boolean(checked)} disabled={disabled} onChange={onChange} />
+    </div>
+  );
+}
+
+function RoundCorrection({ record, track, players, dispatch }) {
   const dialog = useRef(null);
-  const [draft, setDraft] = useState({ title: record.title, origin: record.origin });
+  const [draft, setDraft] = useState({ title: record.title, origin: record.origin, rebound: record.rebound });
   // Dismiss a draft if another tab scores or corrects that round.
-  useLayoutEffect(() => { dialog.current?.close(); }, [record.round, record.points]);
+  useLayoutEffect(() => { dialog.current?.close(); }, [record.round, record.points, record.rebound]);
 
   return (
     <>
       <button type="button" className="correction-trigger" aria-haspopup="dialog"
         onClick={() => {
-          setDraft({ title: record.title, origin: record.origin });
+          setDraft({ title: record.title, origin: record.origin, rebound: record.rebound });
           dialog.current.showModal();
         }}>
         <RotateCcw size={14} aria-hidden="true" /> Corrigir última rodada
@@ -451,18 +465,20 @@ function RoundCorrection({ record, track, teamName, dispatch }) {
         }}>
           <h2 id="correction-title">Corrigir rodada {record.round}</h2>
           <div className="correction-track">
-            <span>{teamName}</span>
+            <span>{players[record.team]}</span>
             <strong>{track.title}</strong>
             <span>{track.artist}</span>
           </div>
           <div className="score-options">
             <MarkChoice title="Música" label="Acertou a música" points={record.titlePoints} checked={draft.title}
-              onChange={title => setDraft(current => ({ ...current, title }))} />
+              onChange={title => setDraft(current => ({ ...current, title, rebound: !title && current.rebound }))} />
             {record.originPoints > 0 && (
               <MarkChoice title="Acertou de quem é?" points={record.originPoints} checked={draft.origin}
                 onChange={origin => setDraft(current => ({ ...current, origin }))} />
             )}
           </div>
+          {record.reboundTeam != null && <ReboundChoice teamName={players[record.reboundTeam]}
+            checked={draft.rebound} disabled={draft.title} onChange={rebound => setDraft(current => ({ ...current, rebound }))} />}
           {record.originPoints > 0 && <p className="correction-detail">Bônus de {peopleList.format(record.personalOrigins.map(id => originPeople[id]))}</p>}
           {record.power && <p className="correction-detail">Poder sorteado · <strong>{powers[record.power].name}</strong></p>}
           <div className="replace-actions">
@@ -489,20 +505,79 @@ function RewardPanel({ award, players, headingRef, onContinue }) {
   );
 }
 
+function RoundAnswer({ game, round, players, dispatch, headingRef }) {
+  const reduced = useReducedMotion();
+  const { marks, award } = game;
+  const track = game.deck[game.trackIndex];
+  const { titlePoints, originPoints, personalOrigins, endsAfterRound, canEarnPower } = round;
+  const awarding = game.phase === 'award';
+  const points = awarding ? award.points : round.points;
+
+  return (
+    <section className="round-panel" aria-labelledby="answer-title">
+      <div className="answer">
+        <span className="answer-icon"><Headphones size={22} /></span>
+        <div>
+          <h2 ref={headingRef} id="answer-title" tabIndex={-1}>{track.title}</h2>
+          <span className="answer-artist" title={track.artist}>{track.artist}</span>
+          {personalOrigins.length > 0 && (
+            <span className="answer-origin">
+              {personalOrigins.length === 1 ? 'Playlist de ' : 'Para o bônus, vale '}
+              {peopleList.format(personalOrigins.map(id => originPeople[id]))}
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="marks-heading">
+        <strong>{game.reboundTeam != null ? players[round.turn] + (game.doubled ? ' · em dobro' : '') : game.doubled ? 'Acertos em dobro' : 'Acertos'}</strong>
+        <span className="round-points" data-positive={points > 0} aria-live="polite">
+          <AnimatePresence initial={false} mode="popLayout">
+            <motion.span key={points} initial={reduced ? false : { opacity: 0, scale: .75, y: 5 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: reduced ? 0 : .2, ease: easeOut }}>
+              {points > 0 ? '+' : ''}{points} {points === 1 ? 'pt' : 'pts'}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      </div>
+      <div className="score-options">
+        <MarkChoice title="Música" label="Acertou a música" points={titlePoints} checked={marks.title} disabled={awarding} onChange={checked => dispatch({ type: 'mark', mark: 'title', checked })} />
+        {originPoints > 0 && (
+          <MarkChoice title="Acertou de quem é?" points={originPoints} checked={marks.origin} disabled={awarding} onChange={checked => dispatch({ type: 'mark', mark: 'origin', checked })} />
+        )}
+      </div>
+      {game.reboundTeam != null && <ReboundChoice teamName={players[game.reboundTeam]} checked={marks.rebound}
+        disabled={awarding || marks.title} onChange={checked => dispatch({ type: 'mark', mark: 'rebound', checked })} />}
+      {canEarnPower && marks.title && (!endsAfterRound || awarding) && (
+        <label className="mark-choice fast-guess">
+          <input type="checkbox" checked={marks.fast} disabled={awarding} aria-label="Acertou com até 3 segundos de áudio"
+            onChange={event => dispatch({ type: 'mark', mark: 'fast', checked: event.target.checked })} />
+          <span className="mark-icon" aria-hidden="true"><Check size={13} strokeWidth={3} /></span>
+          <span><Timer size={15} aria-hidden="true" /> Até 3 s de áudio</span>
+          <strong>{award?.power ? powers[award.power].name : 'Poder'}</strong>
+        </label>
+      )}
+      <button className="button button-primary full-width" disabled={awarding} onClick={() => dispatch({
+        type: 'score',
+        draw: Math.random(),
+        skipAnimation: reduced,
+      })}>
+        {awarding ? 'Pontos marcados' : endsAfterRound ? 'Ver resultado' : marks.fast ? 'Sortear poder' : 'Próxima rodada'}
+        {awarding ? <Check size={20} /> : <ArrowRight size={20} />}
+      </button>
+    </section>
+  );
+}
+
 function Game({ match, dispatch, onBack, onSetup, direction }) {
   const { game, players } = match;
-  const reduced = useReducedMotion();
   const roundHeading = useRef(null);
   const phaseHeading = useRef(null);
-  const { round, deck, trackIndex, phase, marks, winner, award } = game;
-  const track = deck[trackIndex];
+  const { round, deck, trackIndex, phase, winner, award } = game;
   const roundOptions = getRound(game);
   const lastRound = getLastRound(game);
   const finishedRound = lastRound?.round ?? round;
-  const { turn, titlePoints, originPoints, personalOrigins, endsAfterRound, canEarnPower } = roundOptions;
+  const { turn } = roundOptions;
   const scores = game.teams.map(team => team.score);
   const awarding = phase === 'award';
-  const points = awarding ? award.points : roundOptions.points;
   const rewardPower = awarding && award.power;
 
   // A match saved by the previous version can still have a reward pending.
@@ -536,7 +611,7 @@ function Game({ match, dispatch, onBack, onSetup, direction }) {
           <Scoreboard players={players} scores={scores} active={phase === 'finished' ? null : turn} winner={winner} goal={game.goal}
             award={awarding || phase === 'choosePower' ? award : null}>
             {lastRound && phase !== 'choosePower' && (!awarding || rewardPower) && (
-              <RoundCorrection record={lastRound} track={deck[lastRound.trackIndex]} teamName={players[lastRound.team]} dispatch={dispatch} />
+              <RoundCorrection record={lastRound} track={deck[lastRound.trackIndex]} players={players} dispatch={dispatch} />
             )}
           </Scoreboard>
           {phase === 'listen' && <TrackPlayer game={game} round={roundOptions} players={players} dispatch={dispatch} />}
@@ -544,54 +619,7 @@ function Game({ match, dispatch, onBack, onSetup, direction }) {
           {rewardPower && <RewardPanel award={award} players={players} headingRef={phaseHeading}
             onContinue={() => dispatch({ type: 'advance' })} />}
           {(phase === 'reveal' || (awarding && !award.power)) && (
-            <section className="round-panel" aria-labelledby="answer-title">
-              <div className="answer">
-                <span className="answer-icon"><Headphones size={22} /></span>
-                <div>
-                  <h2 ref={phaseHeading} id="answer-title" tabIndex={-1}>{track.title}</h2>
-                  <span className="answer-artist" title={track.artist}>{track.artist}</span>
-                  {personalOrigins.length > 0 && (
-                    <span className="answer-origin">
-                      {personalOrigins.length === 1 ? 'Playlist de ' : 'Para o bônus, vale '}
-                      {peopleList.format(personalOrigins.map(id => originPeople[id]))}
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="marks-heading">
-                <strong>{game.doubled ? 'Acertos em dobro' : 'Acertos'}</strong>
-                <span className="round-points" data-positive={points > 0} aria-live="polite">
-                  <AnimatePresence initial={false} mode="popLayout">
-                    <motion.span key={points} initial={reduced ? false : { opacity: 0, scale: .75, y: 5 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: reduced ? 0 : .2, ease: easeOut }}>
-                      {points > 0 ? '+' : ''}{points} {points === 1 ? 'pt' : 'pts'}
-                    </motion.span>
-                  </AnimatePresence>
-                </span>
-              </div>
-              <div className="score-options">
-                <MarkChoice title="Música" label="Acertou a música" points={titlePoints} checked={marks.title} disabled={awarding} onChange={checked => dispatch({ type: 'mark', mark: 'title', checked })} />
-                {originPoints > 0 && (
-                  <MarkChoice title="Acertou de quem é?" points={originPoints} checked={marks.origin} disabled={awarding} onChange={checked => dispatch({ type: 'mark', mark: 'origin', checked })} />
-                )}
-              </div>
-              {canEarnPower && marks.title && (!endsAfterRound || awarding) && (
-                <label className="mark-choice fast-guess">
-                  <input type="checkbox" checked={marks.fast} disabled={awarding} aria-label="Acertou com até 3 segundos de áudio"
-                    onChange={event => dispatch({ type: 'mark', mark: 'fast', checked: event.target.checked })} />
-                  <span className="mark-icon" aria-hidden="true"><Check size={13} strokeWidth={3} /></span>
-                  <span><Timer size={15} aria-hidden="true" /> Até 3 s de áudio</span>
-                  <strong>{award?.power ? powers[award.power].name : 'Poder'}</strong>
-                </label>
-              )}
-              <button className="button button-primary full-width" disabled={awarding} onClick={() => dispatch({
-                type: 'score',
-                draw: Math.random(),
-                skipAnimation: reduced,
-              })}>
-                {awarding ? 'Pontos marcados' : endsAfterRound ? 'Ver resultado' : marks.fast ? 'Sortear poder' : 'Próxima rodada'}
-                {awarding ? <Check size={20} /> : <ArrowRight size={20} />}
-              </button>
-            </section>
+            <RoundAnswer game={game} round={roundOptions} players={players} dispatch={dispatch} headingRef={phaseHeading} />
           )}
           {phase === 'finished' && (
             <section className="round-panel" aria-labelledby="result-title">
@@ -727,7 +755,7 @@ function App() {
         )}
         {screen === 'practice' && (
           <PowerPractice key="practice" direction={direction} onExit={() => navigate('home', -1)}
-            Screen={Screen} TrackPlayer={TrackPlayer} RewardPanel={RewardPanel} />
+            Screen={Screen} TrackPlayer={TrackPlayer} RewardPanel={RewardPanel} RoundAnswer={RoundAnswer} />
         )}
       </AnimatePresence>
       <Rules dialogRef={dialogRef} deck={screen === 'game' ? match.game.deck : null} />

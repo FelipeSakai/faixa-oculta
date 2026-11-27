@@ -10,6 +10,9 @@ const blockedDetails = {
   trackOpened: 'Use antes de o DJ abrir a faixa.',
   ownPowerUsed: 'A equipe já usou Vale o dobro ou Duas tentativas nesta rodada.',
   hintUsed: 'A equipe já usou uma dica nesta rodada.',
+  trackNotOpened: 'Abra a faixa e ouça o palpite final da equipe da vez.',
+  reboundTaken: 'Uma equipe já pediu rebote nesta rodada.',
+  reboundLocked: 'Os palpites já estão fechados para o rebote.',
   lastTrack: 'Esta é a última faixa da partida.',
 };
 

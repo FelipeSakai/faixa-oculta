@@ -983,6 +983,7 @@ input::placeholder { color: #aa9e8a; }
   font: 500 .8rem/1 var(--font-time);
   white-space: nowrap;
 }
+.marks-heading strong { min-width: 0; overflow-wrap: anywhere; }
 .round-points[data-positive="true"] { color: #ffab95; background: var(--selected-surface); }
 .score-options {
   display: grid;
@@ -1033,6 +1034,7 @@ input::placeholder { color: #aa9e8a; }
 .fast-guess input:checked + .mark-icon { background: #d8b4fb; border-color: #d8b4fb; }
 .mark-choice:has(input:disabled:not(:checked)) { color: #a99a8a; }
 .mark-choice:has(input:disabled:not(:checked)) strong { color: #a99a8a; }
+.rebound-choice { margin-bottom: 9px; overflow-wrap: anywhere; }
 @keyframes mark-in {
   from { opacity: 0; transform: scale(.6) rotate(-22deg); }
   66% { opacity: 1; transform: scale(1.16) rotate(3deg); }

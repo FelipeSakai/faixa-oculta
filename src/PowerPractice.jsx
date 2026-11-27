@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useReducer, useRef } from 'react';
 import { ArrowLeft, RotateCcw, Timer } from 'lucide-react';
 import { tracksForOrigins } from './catalog.js';
 import { gameReducer, getRound, powers, startGame } from './game.js';
+import { Scoreboard } from './Scoreboard.jsx';
 
 const players = ['Equipe 1', 'Equipe 2', 'Equipe 3', 'Equipe 4'];
 const teamTwo = 1;
@@ -63,6 +64,8 @@ function practiceReducer(game, action) {
 }
 
 function practiceHint(game, turn) {
+  if (game.reboundTeam != null) return 'Ouça os dois palpites e revele a resposta.';
+  if (game.notice?.power === 'rebound') return 'Simule a faixa. Depois do palpite da Equipe 2, use o Rebote da Equipe 4.';
   if (game.hint && game.hint.trackIndex === game.trackIndex) return 'Dê seu palpite em voz alta ou toque em Testar outro poder.';
   if (game.doubled) return game.opened ? 'Teste concluído. O título vale 4 pontos nesta rodada.' : 'Simule a faixa com os pontos em dobro.';
   if (game.retry === 'used') return 'Teste concluído. Os dois palpites valem na mesma rodada.';
@@ -71,15 +74,16 @@ function practiceHint(game, turn) {
   if (game.powerSkipped) return game.opened ? 'Teste concluído. A equipe ouviu a nova faixa.' : 'Simule a nova faixa. A vez continua com a mesma equipe.';
   if (game.notice?.power === 'skipTrack') return 'Toque em Trocar faixa para usar o pulo que a Equipe 4 ganhou.';
   if (game.notice) return turn === teamFour ? 'Teste o poder sorteado na vez da Equipe 4.' : 'Use o poder sorteado da Equipe 4 contra a Equipe 2.';
-  if (game.opened) return 'Toque em Trocar faixa para usar um pulo da Equipe 2.';
+  if (game.opened) return 'Depois do palpite da Equipe 2, teste o Rebote da Equipe 4 em Usar poder.';
   return 'Em Usar poder, teste um poder da Equipe 2 ou um ataque da Equipe 4.';
 }
 
-export default function PowerPractice({ direction, onExit, Screen, TrackPlayer, RewardPanel }) {
+export default function PowerPractice({ direction, onExit, Screen, TrackPlayer, RewardPanel, RoundAnswer }) {
   const [game, dispatch] = useReducer(practiceReducer, null, startPractice);
   const heading = useRef(null);
   const round = getRound(game);
-  const awarding = game.phase === 'award' && Boolean(game.award?.power);
+  const reboundResult = game.lastRound?.reboundTeam != null ? game.lastRound : null;
+  const awarding = !reboundResult && game.phase === 'award' && Boolean(game.award?.power);
   const canRestart = game.round !== 2 || Boolean(game.effect || game.retry || game.powerSkipped || game.doubled || game.hint || game.opened);
 
   useLayoutEffect(() => {
@@ -104,7 +108,19 @@ export default function PowerPractice({ direction, onExit, Screen, TrackPlayer, 
             </button>
           ))}
         </nav>
-        {awarding ? <>
+        {reboundResult ? <>
+          <div className="practice-heading">
+            <h1 className="screen-title" ref={heading} tabIndex={-1}>Resultado do rebote</h1>
+            <p role="status">{reboundResult.rebound ? players[reboundResult.reboundTeam] + ' marcou 1 ponto no rebote.'
+              : reboundResult.title ? players[reboundResult.team] + ' acertou a música.' : 'Ninguém acertou a música.'}</p>
+          </div>
+          <Scoreboard players={players} scores={game.teams.map(team => team.score)} active={null} winner={null} goal={game.goal}
+            award={{ team: reboundResult.team, points: reboundResult.points, reboundTeam: reboundResult.reboundTeam,
+              reboundPoints: Number(reboundResult.rebound) }} />
+        </> : game.phase === 'reveal' ? <>
+          <h1 className="sr-only">Revelação do treino</h1>
+          <RoundAnswer game={game} round={round} players={players} dispatch={dispatch} headingRef={heading} />
+        </> : awarding ? <>
           <h1 className="sr-only">Treino de poderes</h1>
           <RewardPanel award={game.award} players={players} headingRef={heading} onContinue={() => dispatch({ type: 'advance' })} />
         </> : <>

@@ -11,10 +11,11 @@ const count = value => Number.isSafeInteger(value) && value >= 0;
 const flag = value => typeof value === 'boolean';
 const label = value => typeof value === 'string' && value.trim().length > 0;
 const hasPower = id => typeof id === 'string' && Object.hasOwn(powers, id);
-const attack = id => id === null || (hasPower(id) && powers[id].opponent);
+const attack = id => id === null || (hasPower(id) && powers[id].opponent && Boolean(powers[id].effect));
 const inRange = (value, length) => count(value) && value < length;
+const omitEmptyStock = id => id === 'rebound' || powers[id]?.hint;
 const stockDefaults = Object.fromEntries(
-  Object.keys(powers).filter(id => id === 'skipTrack' || powers[id].hint).map(id => [id, 0]),
+  Object.keys(powers).filter(id => id === 'skipTrack' || omitEmptyStock(id)).map(id => [id, 0]),
 );
 
 function validSetup({ id, players, goal, powersEnabled, deck }) {
@@ -45,6 +46,23 @@ function restoreTeam(team) {
   };
 }
 
+function validReboundAward(game, turn) {
+  const { award } = game;
+  const rival = award?.reboundTeam;
+  const credited = award?.reboundPoints;
+  if (rival == null) {
+    return (credited === undefined || credited === 0) && (award?.team !== turn || game.reboundTeam == null);
+  }
+  if (!game.powersEnabled || !inRange(rival, game.teams.length) || rival === award.team ||
+      (credited !== 0 && credited !== 1) || credited > game.teams[rival].score) return false;
+  // A retroactive victory displays the previous award while the next team's turn is suspended.
+  if (award.team === turn && (rival !== game.reboundTeam || credited !== Number(Boolean(game.marks.rebound)))) return false;
+  if (game.phase !== 'finished') return true;
+  const winningTeams = credited ? [award.team, rival] : [award.team];
+  const winner = winningTeams.find(index => game.teams[index]?.score >= game.goal) ?? null;
+  return game.winner === winner;
+}
+
 function validProgress(match) {
   const g = match.game;
   if (!flag(g.powersEnabled) || !inRange(g.trackIndex, g.deck.length) || !Array.isArray(g.teams) || g.teams.length !== match.players.length ||
@@ -58,6 +76,15 @@ function validProgress(match) {
       !attack(g.effect) || !attack(g.nextEffect ?? null) || ![null, 'ready', 'used'].includes(g.retry)) return false;
   const teamIndex = i => inRange(i, g.teams.length);
   const { turn, team, points, originPoints, lastTrack, canEarnPower } = getRound(g);
+  if (g.reboundTeam != null && (!teamIndex(g.reboundTeam) || g.reboundTeam === turn ||
+      !g.powersEnabled || !g.opened || g.phase === 'choosePower')) return false;
+  if (g.marks.rebound !== undefined && !flag(g.marks.rebound)) return false;
+  const suspendedTurn = g.phase === 'finished' && g.award?.team !== turn && g.lastRound?.round === g.round - 1;
+  const playingPhase = suspendedTurn ? g.lastRound.resumePhase : g.phase;
+  if (g.marks.rebound && (g.reboundTeam == null || g.marks.title || playingPhase === 'listen')) return false;
+  if (g.teams.length === 1 && (g.teams[0].powers.rebound > 0 || g.notice?.power === 'rebound' ||
+      g.award?.power === 'rebound')) return false;
+  if (g.award && !validReboundAward(g, turn)) return false;
   if (g.hint != null && (!g.powersEnabled || !hasPower(g.hint.power) || !powers[g.hint.power].hint ||
       !count(g.hint.trackIndex) || g.hint.trackIndex < g.round - 1 || g.hint.trackIndex > g.trackIndex)) return false;
   if ((g.effect || g.nextEffect) && (!g.powersEnabled || g.teams.length < 2)) return false;
@@ -144,7 +171,8 @@ export function createMatchStore(storage = () => window.localStorage) {
         ...game, teams: game.teams.map(restoreTeam),
         ...(game.lastRound && !getLastRound(game) ? { lastRound: null } : {}),
         ...restoreTrackHistory(game),
-        marks: clearOrigin ? { ...game.marks, origin: false } : game.marks,
+        marks: { ...game.marks, ...(clearOrigin ? { origin: false } : {}), rebound: game.marks.rebound ?? false },
+        reboundTeam: game.reboundTeam ?? null,
         hint: game.hint ?? null,
         powerSkipped: game.powerSkipped ?? false,
         effectSource: game.effect ? (game.effectSource ?? previousTeam) : null,
@@ -172,13 +200,18 @@ export function createMatchStore(storage = () => window.localStorage) {
     }
     const needsSetup = savedSetup?.id !== next.id;
     if (!needsSetup && next === expected && !snapshot.issue) return true;
-    const { deck, goal, ...progress } = next.game;
+    const { deck, goal, reboundTeam, marks, ...progress } = next.game;
+    const { rebound, ...baseMarks } = marks;
     const teams = progress.teams.map(team => ({
       ...team,
       powers: Object.fromEntries(Object.entries(team.powers).filter(([id, quantity]) =>
-        quantity !== 0 || !powers[id]?.hint)),
+        quantity !== 0 || !omitEmptyStock(id))),
     }));
-    const encoded = JSON.stringify({ ...progress, teams });
+    const encoded = JSON.stringify({
+      ...progress, teams,
+      marks: rebound === false || rebound === undefined ? baseMarks : marks,
+      ...(reboundTeam == null ? {} : { reboundTeam }),
+    });
     const pointer = needsSetup ? JSON.stringify({ version: 2, id: next.id }) : raw;
     const previousSetup = savedSetup;
     const setup = needsSetup ? { id: next.id, players: next.players, deck, goal,

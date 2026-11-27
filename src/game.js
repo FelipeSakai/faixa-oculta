@@ -58,11 +58,16 @@ export const powers = {
     hint: true,
     description: 'Peça ao DJ para tocar o refrão desta faixa.',
   },
+  rebound: {
+    name: 'Rebote',
+    opponent: true,
+    description: 'Depois do palpite final da equipe da vez, diga outro título. Se só a sua equipe acertar, ganha 1 ponto.',
+  },
 };
 
 const powerIds = Object.keys(powers);
 const soloPowerIds = powerIds.filter(id => !powers[id].opponent);
-const emptyMarks = { title: false, origin: false, fast: false };
+const emptyMarks = { title: false, origin: false, fast: false, rebound: false };
 
 export function availablePowerIds(game) {
   if (!game.powersEnabled) return [];
@@ -71,8 +76,10 @@ export function availablePowerIds(game) {
 
 export function powerBlockReason(game, sourceTeam, id) {
   const { turn, lastTrack } = getRound(game);
+  if (game.reboundTeam != null) return id === 'rebound' ? 'reboundTaken' : 'reboundLocked';
   if (powers[id].opponent) {
     if (sourceTeam === turn) return 'opponentTurn';
+    if (id === 'rebound') return game.opened ? null : 'trackNotOpened';
     if (game.effect) return 'alreadyAttacked';
     if (game.opened) return 'trackOpened';
   } else {
@@ -121,6 +128,7 @@ export function startGame({ players, goal, powersEnabled, originIds }, deck = sh
     nextEffect: null,
     retry: null,
     hint: null,
+    reboundTeam: null,
     powerSkipped: false,
     award: null,
     notice: null,
@@ -136,7 +144,7 @@ function pointValues(track, doubled) {
 }
 
 function swapPayment(game, team, allowFree) {
-  if (game.phase !== 'listen' || game.trackIndex >= game.deck.length - 1) return null;
+  if (game.phase !== 'listen' || game.reboundTeam != null || game.trackIndex >= game.deck.length - 1) return null;
   if (allowFree && game.opened && !team.swapUsed) return 'free';
   return game.powersEnabled && team.powers?.skipTrack > 0 ? 'skipTrack' : null;
 }
@@ -148,6 +156,8 @@ export function getRound(game) {
   const listening = game.phase === 'listen';
   const { titlePoints, personalOrigins, originPoints } = pointValues(game.deck[game.trackIndex], game.doubled);
   const points = (game.marks.title ? titlePoints : 0) + (game.marks.origin ? originPoints : 0);
+  const reboundPoints = game.reboundTeam != null && game.marks.rebound && !game.marks.title ? 1 : 0;
+  const rivalWins = reboundPoints > 0 && game.teams[game.reboundTeam]?.score + reboundPoints >= game.goal;
 
   return {
     turn,
@@ -157,16 +167,31 @@ export function getRound(game) {
     personalOrigins,
     originPoints,
     points,
-    endsAfterRound: team.score + points >= game.goal || lastTrack,
+    reboundPoints,
+    endsAfterRound: team.score + points >= game.goal || rivalWins || lastTrack,
     remainingSkips: (team.swapUsed ? 0 : 1) + (team.powers?.skipTrack ?? 0),
     canSwap: swapPayment(game, team, true) !== null,
-    canRetry: listening && game.opened && game.retry === 'ready',
+    canRetry: listening && game.opened && game.retry === 'ready' && game.reboundTeam == null,
     canEarnPower: game.powersEnabled && game.effect !== 'readLyrics',
   };
 }
 
 function updateTeam(teams, turn, changes) {
   return teams.map((team, index) => index === turn ? { ...team, ...changes } : team);
+}
+
+function creditRebound(teams, reboundTeam, delta) {
+  return delta ? updateTeam(teams, reboundTeam, { score: teams[reboundTeam].score + delta }) : teams;
+}
+
+function roundWinner(teams, goal, turn, reboundTeam) {
+  if (teams[turn].score >= goal) return turn;
+  return reboundTeam != null && teams[reboundTeam].score >= goal ? reboundTeam : null;
+}
+
+function roundAward(team, points, power, reboundTeam, reboundPoints) {
+  const award = { team, points, power };
+  return reboundTeam == null ? award : { ...award, reboundTeam, reboundPoints };
 }
 
 function swapTrack(game, turn, allowFree) {
@@ -198,6 +223,7 @@ function recordRound(game, award) {
     team: award.team,
     points: award.points,
     power: award.power,
+    ...(game.reboundTeam == null ? {} : { reboundTeam: game.reboundTeam, rebound: game.marks.rebound === true }),
   };
 }
 
@@ -208,24 +234,31 @@ function validRecord(game, last) {
       ![last.doubled, last.title, last.origin, last.fast].every(value => typeof value === 'boolean') ||
       !(last.power === null || powerIds.includes(last.power))) return false;
   if (last.power && (!last.fast || !availablePowerIds(game).includes(last.power))) return false;
+  const reboundTeam = last.reboundTeam ?? null;
+  if (reboundTeam != null) {
+    if (!game.powersEnabled || !Number.isInteger(reboundTeam) || !game.teams[reboundTeam] || reboundTeam === last.team ||
+        typeof last.rebound !== 'boolean' || (last.rebound && (last.title || game.teams[reboundTeam].score < 1))) return false;
+  } else if (last.rebound !== undefined && last.rebound !== false) return false;
   // Old versions could credit an origin on a general playlist. Preserve that actual amount.
   const credited = ((last.title ? 2 : 0) + (last.origin ? 1 : 0)) * (last.doubled ? 2 : 1);
   if (last.points !== credited || last.points > game.teams[last.team].score) return false;
 
   const sameAward = game.award?.team === last.team && game.award.points === last.points &&
-    game.award.power === last.power;
+    game.award.power === last.power && (game.award.reboundTeam ?? null) === reboundTeam &&
+    (reboundTeam == null ? (game.award.reboundPoints ?? 0) === 0 : game.award.reboundPoints === Number(last.rebound));
+  const winner = roundWinner(game.teams, game.goal, last.team, last.rebound ? reboundTeam : null);
   if (last.round === game.round) {
     if (game.phase === 'finished') {
-      const winner = game.teams[last.team].score >= game.goal ? last.team : null;
       if (game.winner !== winner || (winner === null && last.trackIndex !== game.deck.length - 1)) return false;
     }
     return (game.phase === 'award' || game.phase === 'finished') && sameAward && last.resumePhase === undefined &&
       last.trackIndex === game.trackIndex && last.doubled === game.doubled &&
-      last.title === game.marks.title && last.origin === game.marks.origin && last.fast === game.marks.fast;
+      last.title === game.marks.title && last.origin === game.marks.origin && last.fast === game.marks.fast &&
+      reboundTeam === (game.reboundTeam ?? null) && Boolean(last.rebound) === Boolean(game.marks.rebound);
   }
   if (last.round !== game.round - 1 || last.trackIndex >= game.trackIndex) return false;
   if (game.phase === 'finished') {
-    return sameAward && game.winner === last.team && game.teams[last.team].score >= game.goal &&
+    return sameAward && winner !== null && game.winner === winner &&
       (last.resumePhase === 'listen' || last.resumePhase === 'reveal');
   }
   return last.resumePhase === undefined && (game.phase === 'listen' || game.phase === 'reveal') && !game.award;
@@ -247,13 +280,15 @@ export function getLastRound(game) {
   const last = lastRecord(game);
   if (!last) return null;
   const values = pointValues(game.deck[last.trackIndex], last.doubled);
-  return { ...last, ...values, origin: Boolean(values.originPoints && last.origin) };
+  return { ...last, ...values, origin: Boolean(values.originPoints && last.origin),
+    reboundTeam: last.reboundTeam ?? null, rebound: last.rebound === true };
 }
 
 function advance(game) {
-  const { turn, team, lastTrack } = getRound(game);
-  if (team.score >= game.goal || lastTrack) {
-    return { ...game, phase: 'finished', winner: team.score >= game.goal ? turn : null };
+  const { turn, lastTrack } = getRound(game);
+  const winner = roundWinner(game.teams, game.goal, turn, game.award.reboundPoints ? game.award.reboundTeam : null);
+  if (winner !== null || lastTrack) {
+    return { ...game, phase: 'finished', winner };
   }
 
   return {
@@ -269,6 +304,7 @@ function advance(game) {
     nextEffect: null,
     retry: null,
     hint: null,
+    reboundTeam: null,
     powerSkipped: false,
     notice: game.award.power ? { team: turn, power: game.award.power } : null,
     award: null,
@@ -279,19 +315,23 @@ function correctLastRound(game, action) {
   const last = getLastRound(game);
   const { round, title, origin } = action;
   if (!last || round !== last.round || typeof title !== 'boolean' || typeof origin !== 'boolean' ||
-      (origin && !last.originPoints) || (title === last.title && origin === last.origin)) return game;
+      (action.rebound !== undefined && typeof action.rebound !== 'boolean') || (origin && !last.originPoints)) return game;
+  const rebound = !title && (action.rebound ?? last.rebound);
+  if ((rebound && last.reboundTeam == null) ||
+      (title === last.title && origin === last.origin && rebound === last.rebound)) return game;
 
   const points = (title ? last.titlePoints : 0) + (origin ? last.originPoints : 0);
   const score = game.teams[last.team].score - last.points + points;
-  const teams = updateTeam(game.teams, last.team, { score });
+  const teams = creditRebound(updateTeam(game.teams, last.team, { score }),
+    last.reboundTeam, Number(rebound) - Number(last.rebound));
   const { resumePhase, ...previous } = game.lastRound ?? recordRound(game, game.award);
-  const lastRound = { ...previous, title, origin, points };
-  const award = { team: last.team, points, power: last.power };
-  const winner = score >= game.goal ? last.team : null;
+  const lastRound = { ...previous, title, origin, points, ...(last.reboundTeam == null ? {} : { rebound }) };
+  const award = roundAward(last.team, points, last.power, last.reboundTeam, Number(rebound));
+  const winner = roundWinner(teams, game.goal, last.team, rebound ? last.reboundTeam : null);
   const finished = winner !== null || last.trackIndex === game.deck.length - 1;
 
   if (game.round === round) {
-    const corrected = { ...game, teams, lastRound, award, winner, marks: { ...game.marks, title, origin } };
+    const corrected = { ...game, teams, lastRound, award, winner, marks: { ...game.marks, title, origin, rebound } };
     if (finished) return { ...corrected, phase: 'finished' };
     return game.phase === 'finished' ? advance(corrected) : corrected;
   }
@@ -309,7 +349,7 @@ function correctLastRound(game, action) {
 }
 
 export function gameReducer(game, action) {
-  const { turn, team, canRetry, canEarnPower, endsAfterRound, points, originPoints } = getRound(game);
+  const { turn, team, canRetry, canEarnPower, endsAfterRound, points, originPoints, reboundPoints } = getRound(game);
 
   switch (action.type) {
     case 'correctLastRound':
@@ -327,7 +367,8 @@ export function gameReducer(game, action) {
       if (!usablePowerIds(game, sourceTeam).includes(power)) return game;
       const stock = game.teams[sourceTeam].powers;
       let changes;
-      if (powers[power].opponent) changes = { effect: power, effectSource: sourceTeam };
+      if (power === 'rebound') changes = { reboundTeam: sourceTeam };
+      else if (powers[power].opponent) changes = { effect: power, effectSource: sourceTeam };
       else if (powers[power].hint) changes = { hint: { power, trackIndex: game.trackIndex } };
       else if (power === 'doublePoints') changes = { doubled: true };
       else changes = { retry: 'ready' };
@@ -344,17 +385,14 @@ export function gameReducer(game, action) {
       return game.phase === 'listen' ? { ...game, phase: 'reveal' } : game;
     case 'mark': {
       const { mark, checked } = action;
-      if (game.phase !== 'reveal') return game;
+      if (game.phase !== 'reveal' || !Object.hasOwn(emptyMarks, mark) || typeof checked !== 'boolean') return game;
       if (mark === 'origin' && !originPoints) return game;
       if (mark === 'fast' && (!canEarnPower || !game.marks.title)) return game;
-      return {
-        ...game,
-        marks: {
-          ...game.marks,
-          [mark]: checked,
-          fast: mark === 'fast' ? checked : game.marks.fast && !(mark === 'title' && !checked),
-        },
-      };
+      if (mark === 'rebound' && (game.reboundTeam == null || game.marks.title)) return game;
+      const marks = { ...game.marks, [mark]: checked };
+      if (mark === 'title' && checked) marks.rebound = false;
+      if (mark === 'title' && !checked) marks.fast = false;
+      return { ...game, marks };
     }
     case 'score':
     case 'drawReward': {
@@ -366,16 +404,17 @@ export function gameReducer(game, action) {
       if (earnsPower && !power) return game;
       const teamChanges = { score: pending ? team.score : team.score + points };
       if (power) teamChanges.powers = { ...team.powers, [power]: team.powers[power] + 1 };
-      const award = { team: turn, points: pending ? game.award.points : points, power };
+      const award = roundAward(turn, pending ? game.award.points : points, power, game.reboundTeam, reboundPoints);
+      const teams = updateTeam(game.teams, turn, teamChanges);
       const scored = {
         ...game,
         phase: 'award',
-        teams: updateTeam(game.teams, turn, teamChanges),
+        teams: pending ? teams : creditRebound(teams, game.reboundTeam, reboundPoints),
         award,
         lastRound: recordRound(game, award),
       };
       if (power) return scored;
-      return scored.award.points === 0 || action.skipAnimation ? advance(scored) : scored;
+      return (!award.points && !reboundPoints) || action.skipAnimation ? advance(scored) : scored;
     }
     case 'advance':
       return game.phase === 'award' ? advance({ ...game, lastRound: lastRecord(game) }) : game;
