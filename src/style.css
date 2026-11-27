@@ -747,6 +747,8 @@ input::placeholder { color: #aa9e8a; }
   overflow-wrap: anywhere;
 }
 .round-notices span { display: flex; align-items: center; gap: 6px; padding-inline: 4px; }
+.round-hint { margin: 0; padding: 4px; color: var(--paper); font-size: .9rem; }
+.round-hint strong { color: var(--power-detail); }
 .applied-power { padding: 4px; color: #ffc7af; }
 .applied-power strong { display: flex; align-items: center; gap: 5px; }
 .applied-power > span { padding: 2px 0 0 20px; color: var(--paper); }
@@ -1161,7 +1163,7 @@ input::placeholder { color: #aa9e8a; }
 @media (max-width: 640px) and (max-height: 620px) {
   .game .player .player-visual { min-height: 68px; }
   .game .player .player-record { width: 59px; }
-  .game .player:has(.applied-power) .player-visual { display: none; }
+  .game .player:has(.applied-power, .round-hint) .player-visual { display: none; }
   .setup .stage-shell {
     display: grid;
     grid-template-columns: 44px minmax(0, 1fr);

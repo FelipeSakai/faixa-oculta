@@ -6,7 +6,7 @@ Em **Equipes**, adicione quantas equipes precisar e dê um nome a cada uma, se q
 
 Cada equipe começa com uma troca grátis, inclusive no solo. O número em **Trocar faixa** soma a troca grátis e os pulos que a equipe ganhou. Se a faixa já foi aberta e a troca grátis ainda está disponível, o botão usa a grátis primeiro. Os pulos ganhos podem ser usados no mesmo botão até antes de abrir a faixa. Cada toque troca uma música e desconta um pulo. A equipe continua na vez.
 
-Novas partidas começam com **Poderes** ligados. Você pode desligá-los na configuração ou tocar em **Ativar poderes** durante a escuta de uma partida que começou com eles desligados. Se o DJ marcar um acerto de título em até 3 segundos de áudio e a partida continuar, toque em **Sortear poder** para ver a equipe, o nome do poder e seu efeito. A recompensa já está guardada e fica na tela até o DJ tocar em **Próxima rodada**. Em equipes podem sair sete poderes. No solo podem sair **Duas tentativas**, **Pular música** e **Vale o dobro**.
+Novas partidas começam com **Poderes** ligados. Você pode desligá-los na configuração ou tocar em **Ativar poderes** durante a escuta de uma partida que começou com eles desligados. Se o DJ marcar um acerto de título em até 3 segundos de áudio e a partida continuar, toque em **Sortear poder** para ver a equipe, o nome do poder e seu efeito. A recompensa já está guardada e fica na tela até o DJ tocar em **Próxima rodada**. Em equipes podem sair dez poderes. No solo podem sair os seis de uso próprio, incluindo as três dicas.
 
 Durante a escuta, **Usar poder** abre os poderes guardados pelas equipes e indica quando cada um pode ser usado. Selecione a equipe, escolha o poder e confirme em **Aplicar poder**. Antes de o DJ abrir a pista, qualquer equipe adversária pode gastar um ataque. A equipe da vez recebe o efeito imediatamente e continua jogando. Cada rodada admite um ataque.
 
@@ -18,7 +18,13 @@ Durante a escuta, **Usar poder** abre os poderes guardados pelas equipes e indic
 - Ao sair **Pular música** no sorteio, **Trocar faixa** recebe automaticamente mais um pulo para a equipe premiada. É nesse botão que ela usa os pulos, inclusive vários na mesma rodada enquanto houver outra faixa no baralho. O dobro ou a segunda tentativa continuam valendo na nova faixa.
 - **Vale o dobro** pode ser usado na vez da própria equipe, antes de abrir a faixa. O título passa a valer 4 pontos. Se houver bônus de playlist pessoal, ele vale 2. A equipe escolhe entre **Vale o dobro** e **Duas tentativas** em cada rodada. Nas partidas salvas antes desta mudança, o dobro que a equipe ainda tinha fica guardado em **Usar poder**.
 
-O treino pode ser aberto pelo endereço do jogo com `#teste-poderes` no final. Ele começa na vez da Equipe 2, com poderes guardados para experimentar um ataque da Equipe 4.
+Na própria vez, a equipe pode gastar **uma dica por rodada** antes de revelar a resposta, inclusive depois de abrir a faixa. As outras dicas ficam guardadas. A dica pode ser combinada com o dobro ou a segunda tentativa. Trocar de música consome o pulo normalmente e mantém a dica gasta até a próxima rodada.
+
+- **Artista principal** mostra quem interpreta a faixa.
+- **Iniciais do título** mostra a primeira letra de cada palavra. Para *Smells Like Teen Spirit*, a equipe vê *S · L · T · S*.
+- **Pular pro refrão** pede ao DJ que avance manualmente até o refrão da mesma música. Se houver um ataque, o DJ segue a regra dele também.
+
+O treino pode ser aberto pelo endereço do jogo com `#teste-poderes` no final. Ele começa na vez da Equipe 2, que já tem as três dicas guardadas. A Equipe 4 também tem ataques para experimentar.
 
 ## Seleções
 

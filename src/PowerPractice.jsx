@@ -24,7 +24,8 @@ function advanceToTeam(game, targetTeam) {
 function startPractice() {
   const game = advanceToTeam(practiceGame(), teamTwo);
   const attacks = Object.keys(powers).filter(id => powers[id].opponent);
-  const stocks = [[], ['skipTrack', 'doublePoints'], ['tenSeconds'], attacks];
+  const hints = Object.keys(powers).filter(id => powers[id].hint);
+  const stocks = [[], ['skipTrack', 'doublePoints', ...hints], ['tenSeconds'], attacks];
   const teams = game.teams.map((team, index) => ({
     ...team,
     powers: { ...team.powers, ...Object.fromEntries(stocks[index].map(id => [id, 1])) },
@@ -62,6 +63,7 @@ function practiceReducer(game, action) {
 }
 
 function practiceHint(game, turn) {
+  if (game.hint && game.hint.trackIndex === game.trackIndex) return 'Dê seu palpite em voz alta ou toque em Testar outro poder.';
   if (game.doubled) return game.opened ? 'Teste concluído. O título vale 4 pontos nesta rodada.' : 'Simule a faixa com os pontos em dobro.';
   if (game.retry === 'used') return 'Teste concluído. Os dois palpites valem na mesma rodada.';
   if (game.retry === 'ready') return game.opened ? 'Simule um erro e peça o segundo palpite.' : 'Simule a faixa para tentar o primeiro palpite.';
@@ -78,7 +80,7 @@ export default function PowerPractice({ direction, onExit, Screen, TrackPlayer, 
   const heading = useRef(null);
   const round = getRound(game);
   const awarding = game.phase === 'award' && Boolean(game.award?.power);
-  const canRestart = game.round !== 2 || Boolean(game.effect || game.retry || game.powerSkipped || game.doubled || game.opened);
+  const canRestart = game.round !== 2 || Boolean(game.effect || game.retry || game.powerSkipped || game.doubled || game.hint || game.opened);
 
   useLayoutEffect(() => {
     heading.current?.focus({ preventScroll: true });

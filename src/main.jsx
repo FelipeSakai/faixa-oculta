@@ -11,6 +11,7 @@ import '@fontsource/ibm-plex-mono/latin-500.css';
 import { BlurReveal } from './BlurReveal.jsx';
 import { Scoreboard } from './Scoreboard.jsx';
 import { originPeople, personalOriginIds } from './catalog.js';
+import { mainArtist, titleInitials } from './track-hints.js';
 import { playlistPreferenceKey, previousPlaylistSelection, readPlaylistPreference, writePlaylistPreference } from './playlist-preference.js';
 import { PlaylistPicker } from './PlaylistPicker.jsx';
 import PowerPractice from './PowerPractice.jsx';
@@ -84,6 +85,7 @@ function Rules({ dialogRef, deck }) {
           <li><strong>Ganhe um poder surpresa.</strong><span>Marque o acerto do título em até 3 s e toque em Sortear poder. Leia o que a equipe ganhou e toque em Próxima rodada.</span></li>
           <li><strong>Escolha qual poder usar.</strong><span>Toque em Usar poder, escolha a equipe e o poder que ela vai gastar. Para atacar uma rival, use antes de abrir a pista. Cabe um ataque por rodada.</span></li>
           <li><strong>Poderes da sua equipe.</strong><span>Escolha entre Vale o dobro e Duas tentativas a cada rodada. Ative o dobro antes de abrir a faixa ou use Duas tentativas para fazer outro palpite.</span></li>
+          <li><strong>Uma dica por rodada.</strong><span>Na sua vez, escolha uma dica em Usar poder antes de revelar. Se trocar de faixa, a dica continua gasta.</span></li>
         </ol>
         <button className="button button-primary full-width" onClick={() => dialogRef.current.close()}>Entendi <ArrowRight size={20} /></button>
       </div>
@@ -313,6 +315,15 @@ function getTrackAction(track, effect) {
   return { url: track.url, label: 'Abrir no Spotify', Icon: Play };
 }
 
+function roundHintText(power, track, effect) {
+  if (power === 'mainArtist') return mainArtist(track);
+  if (power === 'titleInitials') return titleInitials(track.title);
+  if (effect === 'readLyrics') return 'DJ, leia o refrão sem dizer o título.';
+  if (effect === 'instrumental') return 'DJ, toque o refrão da versão instrumental.';
+  if (effect === 'tenSeconds') return 'DJ, toque até 10 s do refrão.';
+  return 'DJ, avance até o refrão desta faixa no Spotify.';
+}
+
 function TrackPlayer({ game, round, players, dispatch, practice = false }) {
   const trackLink = useRef(null);
   const revealButton = useRef(null);
@@ -321,15 +332,16 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
   const { url, label: trackLabel, accessibleLabel, Icon: TrackIcon } = getTrackAction(track, game.effect);
   const { team, turn, canSwap, canRetry, remainingSkips } = round;
   const powerNotice = game.notice?.power === 'skipTrack' ? null : game.notice;
+  const activeHint = game.hint?.trackIndex === game.trackIndex ? game.hint.power : null;
   const target = players[(turn + 1) % players.length];
 
   useLayoutEffect(() => {
     if (canRetry) {
       retryButton.current?.focus({ preventScroll: true });
-    } else if (practice && !game.opened && (game.effect || game.retry || game.powerSkipped || game.doubled)) {
+    } else if (practice && !game.opened && (game.effect || game.retry || game.powerSkipped || game.doubled || activeHint)) {
       trackLink.current?.focus({ preventScroll: true });
     }
-  }, [canRetry, practice, game.opened, game.effect, game.retry, game.powerSkipped, game.doubled]);
+  }, [canRetry, practice, game.opened, game.effect, game.retry, game.powerSkipped, game.doubled, activeHint]);
 
   return (
     <section className="player" aria-label="Faixa da rodada">
@@ -357,7 +369,7 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
             <Zap size={16} aria-hidden="true" /> Ativar poderes
           </button>}
         </div>
-        {(game.effect || game.nextEffect || powerNotice || game.retry || game.powerSkipped || game.doubled) && (
+        {(game.effect || game.nextEffect || powerNotice || game.retry || game.powerSkipped || game.doubled || activeHint) && (
           <div className="round-notices" role="status">
             {game.effect && <div className="applied-power">
               <strong><Zap size={15} aria-hidden="true" />
@@ -375,10 +387,11 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
             {game.doubled && <span><Zap size={14} aria-hidden="true" /> Pontos em dobro nesta rodada.</span>}
             {game.powerSkipped && <span><Shuffle size={14} aria-hidden="true" /> Música pulada. A vez continua com {players[turn]}.</span>}
             {powerNotice && <span><Zap size={14} aria-hidden="true" /> {players.length === 1 ? 'Você ganhou' : players[powerNotice.team] + ' ganhou'}: {powers[powerNotice.power].name}</span>}
+            {activeHint && <p className="round-hint"><strong>{powers[activeHint].name}</strong> · {roundHintText(activeHint, track, game.effect)}</p>}
           </div>
         )}
         {practice ? (
-          (game.effect || game.retry || game.powerSkipped || game.doubled || team.powers.skipTrack > 0) && <button ref={trackLink} className="button button-primary full-width" disabled={game.opened}
+          (game.effect || game.retry || game.powerSkipped || game.doubled || activeHint || team.powers.skipTrack > 0) && <button ref={trackLink} className="button button-primary full-width" disabled={game.opened}
             onClick={() => dispatch({ type: 'openTrack' })}>
             {game.opened ? 'Pista simulada' : game.effect === 'readLyrics' ? 'Simular leitura' : game.effect === 'instrumental' ? 'Simular instrumental' : 'Simular faixa'}
             {game.opened ? <Check size={19} /> : <Play size={19} />}

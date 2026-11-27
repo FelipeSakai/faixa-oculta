@@ -9,6 +9,7 @@ const blockedDetails = {
   alreadyAttacked: 'A equipe da vez já recebeu um ataque.',
   trackOpened: 'Use antes de o DJ abrir a faixa.',
   ownPowerUsed: 'A equipe já usou Vale o dobro ou Duas tentativas nesta rodada.',
+  hintUsed: 'A equipe já usou uma dica nesta rodada.',
   lastTrack: 'Esta é a última faixa da partida.',
 };
 

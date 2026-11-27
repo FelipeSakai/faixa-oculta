@@ -4,6 +4,15 @@ import { availablePowerIds, gameReducer, getRound, powerBlockReason, startGame, 
 import { createMatchStore, progressKey, saveKey } from '../src/saved-match.js';
 import { tracksForOrigins } from '../src/catalog.js';
 
+const hintIds = ['mainArtist', 'titleInitials', 'chorus'];
+const ownPowerIds = ['secondGuess', 'skipTrack', 'doublePoints', ...hintIds];
+
+function drawFor(game, id) {
+  const options = availablePowerIds(game);
+  assert.ok(options.includes(id));
+  return (options.indexOf(id) + 0.5) / options.length;
+}
+
 function memoryStorage() {
   const data = new Map();
   return {
@@ -192,8 +201,8 @@ test('solo preserva a segunda tentativa e o placar final', () => {
 
 test('as opções de recompensa obedecem ao formato e aos poderes habilitados', () => {
   const game = newMatch().game;
-  assert.deepEqual(availablePowerIds(game), ['tenSeconds', 'oneGuesser', 'readLyrics', 'instrumental', 'secondGuess', 'skipTrack', 'doublePoints']);
-  assert.deepEqual(availablePowerIds(newMatch(['Você']).game), ['secondGuess', 'skipTrack', 'doublePoints']);
+  assert.deepEqual(availablePowerIds(game), ['tenSeconds', 'oneGuesser', 'readLyrics', 'instrumental', ...ownPowerIds]);
+  assert.deepEqual(availablePowerIds(newMatch(['Você']).game), ownPowerIds);
   assert.deepEqual(availablePowerIds({ ...game, powersEnabled: false }), []);
 });
 
@@ -211,6 +220,78 @@ test('o sorteio de recompensa divide igualmente os intervalos entre os poderes p
       assert.equal(after.teams[0].score, 2);
     }
   }
+});
+
+test('a equipe da vez pode usar uma das três dicas antes ou depois de abrir, junto com outros poderes', () => {
+  const { game } = matchWithPowers();
+  const use = { type: 'usePower', sourceTeam: 0, targetTeam: 0 };
+  const attack = { ...use, power: 'tenSeconds', sourceTeam: 1 };
+  for (const power of hintIds) {
+    const action = { ...use, power };
+    assert.equal(powerBlockReason(game, 1, power), 'ownTurn');
+    assert.equal(gameReducer(game, { ...action, sourceTeam: 1 }), game);
+    assert.equal(gameReducer(game, { ...action, targetTeam: 1 }), game);
+    for (const phase of ['reveal', 'choosePower', 'award', 'finished']) {
+      const other = { ...game, phase };
+      assert.equal(gameReducer(other, action), other);
+    }
+    for (const afterOpening of [false, true]) {
+      const before = afterOpening
+        ? [attack, { ...use, power: 'secondGuess' }, { type: 'openTrack' }].reduce(gameReducer, game)
+        : game;
+      const after = gameReducer(before, action);
+      assert.deepEqual(after.hint, { power, trackIndex: before.trackIndex });
+      assert.equal(after.opened, afterOpening);
+      assert.deepEqual(after.teams[0].powers, { ...before.teams[0].powers, [power]: 1 });
+      assert.deepEqual(after.teams.slice(1), before.teams.slice(1));
+      for (const id of hintIds) {
+        assert.equal(powerBlockReason(after, 0, id), 'hintUsed');
+        assert.equal(gameReducer(after, { ...use, power: id }), after);
+      }
+      if (afterOpening) {
+        assert.equal(after.effect, attack.power);
+        assert.equal(after.retry, 'ready');
+      } else {
+        const combined = [attack, { ...use, power: 'doublePoints' }].reduce(gameReducer, after);
+        assert.equal(combined.effect, attack.power);
+        assert.equal(combined.doubled, true);
+        assert.deepEqual(combined.hint, after.hint);
+      }
+    }
+  }
+});
+
+test('a dica continua gasta após pulos, recarga e correção de vitória e só é liberada na próxima rodada', () => {
+  const disk = memoryStorage();
+  let store = createMatchStore(() => disk);
+  const match = matchWithPowers();
+  match.game.goal = 3;
+  store.commit(null, match);
+  play(store, 'reveal');
+  play(store, 'mark', { mark: 'title', checked: true });
+  play(store, 'score', { skipAnimation: true });
+  const hint = { power: 'titleInitials', trackIndex: 1 };
+  const hinted = play(store, 'usePower', { sourceTeam: 1, targetTeam: 1, power: hint.power });
+  assert.deepEqual(hinted.hint, hint);
+  store = createMatchStore(() => disk);
+  assert.deepEqual(store.getSnapshot().match.game, hinted);
+
+  play(store, 'swap');
+  play(store, 'openTrack');
+  const swapped = play(store, 'swap');
+  assert.equal(swapped.trackIndex, 3);
+  assert.deepEqual(swapped.hint, hint);
+  const correction = { round: 1, title: true, origin: true };
+  assert.equal(play(store, 'correctLastRound', correction).phase, 'finished');
+  store = createMatchStore(() => disk);
+  assert.deepEqual(play(store, 'correctLastRound', { ...correction, origin: false }), swapped);
+  assert.equal(powerBlockReason(swapped, 1, 'mainArtist'), 'hintUsed');
+  assert.equal(swapped.teams[1].powers[hint.power], 1);
+  play(store, 'reveal');
+  const next = play(store, 'score');
+  assert.equal(next.round, 3);
+  assert.equal(next.hint, null);
+  assert.ok(hintIds.every(id => usablePowerIds(next, 2).includes(id)));
 });
 
 test('a equipe escolhe qual ataque gastar e guarda os outros para outra rodada', () => {
@@ -249,7 +330,7 @@ test('Vale o dobro começa sem cópias e pode ser ganho e guardado no solo e em 
     assert.equal(gameReducer(game, { type: 'double' }), game);
     assert.equal(gameReducer(game, use), game);
     const reveal = { ...game, phase: 'reveal', marks: { title: true, origin: false, fast: true } };
-    const earned = gameReducer(reveal, { type: 'score', draw: 0.999 });
+    const earned = gameReducer(reveal, { type: 'score', draw: drawFor(game, 'doublePoints') });
     assert.equal(earned.phase, 'award');
     assert.equal(earned.award.power, 'doublePoints');
     assert.equal(earned.teams[0].powers.doublePoints, 1);
@@ -331,7 +412,7 @@ test('o saldo de pulos soma a troca grátis e os poderes da equipe da vez, inclu
   play(store, 'reveal');
   play(store, 'mark', { mark: 'title', checked: true });
   play(store, 'mark', { mark: 'fast', checked: true });
-  const rewarded = play(store, 'score', { draw: 0.8 });
+  const rewarded = play(store, 'score', { draw: drawFor(match.game, 'skipTrack') });
   assert.equal(rewarded.award.power, 'skipTrack');
   assert.equal(getRound(rewarded).remainingSkips, 2);
 
@@ -379,7 +460,7 @@ test('pular faixa preserva a vez, o ataque e a troca grátis em qualquer ordem',
     assert.deepEqual(skipped.deck, before.deck);
     store = createMatchStore(() => storage);
     assert.deepEqual(store.getSnapshot().match.game, skipped);
-    assert.deepEqual(usablePowerIds(skipped, 0), ['secondGuess', 'skipTrack', 'doublePoints']);
+    assert.deepEqual(usablePowerIds(skipped, 0), ownPowerIds);
     if (!freeSwapFirst) {
       play(store, 'openTrack');
       const swapped = play(store, 'swap');
@@ -522,7 +603,7 @@ test('nenhum pulo avança a última faixa ou funciona depois de revelar', () => 
 test('solo pode sortear e usar Pular faixa, e o poder fica inelegível na última música', () => {
   const { game } = newMatch(['Solo']);
   const reveal = { ...game, phase: 'reveal', marks: { title: true, origin: false, fast: true } };
-  const awarded = gameReducer(reveal, { type: 'score', skipAnimation: true, draw: 0.5 });
+  const awarded = gameReducer(reveal, { type: 'score', skipAnimation: true, draw: drawFor(game, 'skipTrack') });
   assert.equal(awarded.award.power, 'skipTrack');
   assert.deepEqual(usablePowerIds(awarded, 0), []);
   const next = gameReducer(awarded, { type: 'advance' });
@@ -550,7 +631,7 @@ test('uma recompensa pendente da versão anterior é sorteada sem somar os ponto
   const pending = store.getSnapshot().match.game;
   assert.equal(gameReducer(pending, { type: 'score', draw: 0 }), pending);
   assert.equal(gameReducer(pending, { type: 'choosePower', power: 'tenSeconds' }), pending);
-  const drawn = play(store, 'drawReward', { draw: 0.8 });
+  const drawn = play(store, 'drawReward', { draw: drawFor(pending, 'skipTrack') });
   assert.equal(drawn.phase, 'award');
   assert.deepEqual(drawn.award, { team: 0, points: 2, power: 'skipTrack' });
   assert.equal(drawn.teams[0].score, 2);
@@ -569,7 +650,7 @@ test('cada equipe escolhe em qual turno adversário gastar o ataque, inclusive n
     const current = { ...game, round, trackIndex: round === 8 ? game.deck.length - 1 : round - 1 };
     const targetTeam = (round - 1) % 4;
     for (let sourceTeam = 0; sourceTeam < 4; sourceTeam++) {
-      const ownPowers = round === 8 ? ['secondGuess', 'doublePoints'] : ['secondGuess', 'skipTrack', 'doublePoints'];
+      const ownPowers = round === 8 ? ownPowerIds.filter(id => id !== 'skipTrack') : ownPowerIds;
       assert.deepEqual(usablePowerIds(current, sourceTeam), sourceTeam === targetTeam ? ownPowers : attacks);
       if (sourceTeam === targetTeam) continue;
       for (const power of attacks) {
@@ -647,7 +728,7 @@ test('rejeita alvo fora da vez, equipe inválida, ataque após a pista e poder i
   }
   const opened = gameReducer(game, { type: 'openTrack' });
   assert.deepEqual(usablePowerIds(opened, 3), []);
-  assert.deepEqual(usablePowerIds(opened, 0), ['secondGuess', 'skipTrack']);
+  assert.deepEqual(usablePowerIds(opened, 0), ['secondGuess', 'skipTrack', ...hintIds]);
   assert.equal(gameReducer(opened, attack), opened);
   for (const id of usablePowerIds(game, 3)) game.teams[3].powers[id] = 0;
   assert.deepEqual(usablePowerIds(game, 3), []);
@@ -723,7 +804,7 @@ test('a recompensa vai para a equipe da vez e a próxima equipe recebe o turno',
   const game = newMatch().game;
   const awarded = gameReducer({
     ...game, round: 2, trackIndex: 1, phase: 'reveal', marks: { title: true, origin: true, fast: true },
-  }, { type: 'score', draw: 0.5, skipAnimation: true });
+  }, { type: 'score', draw: drawFor(game, 'instrumental'), skipAnimation: true });
   assert.equal(awarded.phase, 'award');
   assert.equal(getRound(awarded).turn, 1);
   const next = gameReducer(awarded, { type: 'advance' });

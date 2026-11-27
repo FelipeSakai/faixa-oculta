@@ -13,6 +13,9 @@ const label = value => typeof value === 'string' && value.trim().length > 0;
 const hasPower = id => typeof id === 'string' && Object.hasOwn(powers, id);
 const attack = id => id === null || (hasPower(id) && powers[id].opponent);
 const inRange = (value, length) => count(value) && value < length;
+const stockDefaults = Object.fromEntries(
+  Object.keys(powers).filter(id => id === 'skipTrack' || powers[id].hint).map(id => [id, 0]),
+);
 
 function validSetup({ id, players, goal, powersEnabled, deck }) {
   return label(id) && Array.isArray(players) && players.length > 0 && players.every(label) &&
@@ -26,18 +29,17 @@ function validTeam(team) {
       (Object.hasOwn(team, 'doubleUsed') && !flag(team.doubleUsed))) return false;
   return Object.keys(powers).every(id => {
     if (Object.hasOwn(team.powers, id)) return count(team.powers[id]);
-    return id === 'skipTrack' || (id === 'doublePoints' && flag(team.doubleUsed));
+    return Object.hasOwn(stockDefaults, id) || (id === 'doublePoints' && flag(team.doubleUsed));
   });
 }
 
 function restoreTeam(team) {
-  if (!Object.hasOwn(team, 'doubleUsed') && Object.hasOwn(team.powers, 'skipTrack')) return team;
   const { doubleUsed, ...current } = team;
   return {
     ...current,
     powers: {
+      ...stockDefaults,
       ...current.powers,
-      skipTrack: current.powers.skipTrack ?? 0,
       doublePoints: current.powers.doublePoints ?? (doubleUsed ? 0 : 1),
     },
   };
@@ -56,6 +58,8 @@ function validProgress(match) {
       !attack(g.effect) || !attack(g.nextEffect ?? null) || ![null, 'ready', 'used'].includes(g.retry)) return false;
   const teamIndex = i => inRange(i, g.teams.length);
   const { turn, team, points, originPoints, lastTrack, canEarnPower } = getRound(g);
+  if (g.hint != null && (!g.powersEnabled || !hasPower(g.hint.power) || !powers[g.hint.power].hint ||
+      !count(g.hint.trackIndex) || g.hint.trackIndex < g.round - 1 || g.hint.trackIndex > g.trackIndex)) return false;
   if ((g.effect || g.nextEffect) && (!g.powersEnabled || g.teams.length < 2)) return false;
   if (g.effect) {
     // In older games only the previous team could have set the active effect.
@@ -141,6 +145,7 @@ export function createMatchStore(storage = () => window.localStorage) {
         ...(game.lastRound && !getLastRound(game) ? { lastRound: null } : {}),
         ...restoreTrackHistory(game),
         marks: clearOrigin ? { ...game.marks, origin: false } : game.marks,
+        hint: game.hint ?? null,
         powerSkipped: game.powerSkipped ?? false,
         effectSource: game.effect ? (game.effectSource ?? previousTeam) : null,
         nextEffect: game.nextEffect ?? null,
@@ -168,7 +173,12 @@ export function createMatchStore(storage = () => window.localStorage) {
     const needsSetup = savedSetup?.id !== next.id;
     if (!needsSetup && next === expected && !snapshot.issue) return true;
     const { deck, goal, ...progress } = next.game;
-    const encoded = JSON.stringify(progress);
+    const teams = progress.teams.map(team => ({
+      ...team,
+      powers: Object.fromEntries(Object.entries(team.powers).filter(([id, quantity]) =>
+        quantity !== 0 || !powers[id]?.hint)),
+    }));
+    const encoded = JSON.stringify({ ...progress, teams });
     const pointer = needsSetup ? JSON.stringify({ version: 2, id: next.id }) : raw;
     const previousSetup = savedSetup;
     const setup = needsSetup ? { id: next.id, players: next.players, deck, goal,

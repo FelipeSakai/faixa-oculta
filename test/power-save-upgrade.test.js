@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { tracksForOrigins } from '../src/catalog.js';
-import { gameReducer, startGame } from '../src/game.js';
+import { availablePowerIds, gameReducer, startGame } from '../src/game.js';
 import { createMatchStore, progressKey, saveKey } from '../src/saved-match.js';
 
 const players = ['Azul', 'Verde'];
 const deck = tracksForOrigins(['classicos-br']).slice(0, 5);
+const hintIds = ['mainArtist', 'titleInitials', 'chorus'];
 
 function storageWith(game, version) {
   const data = new Map();
@@ -26,7 +27,9 @@ function start() {
 
 function legacyGame() {
   const game = start();
+  delete game.hint;
   game.teams.forEach((team, index) => {
+    for (const id of hintIds) delete team.powers[id];
     delete team.powers.doublePoints;
     team.doubleUsed = index === 1;
   });
@@ -48,11 +51,15 @@ for (const version of [1, 2]) {
     const store = createMatchStore(() => disk);
     const pending = store.getSnapshot().match;
     assert.equal(pending.game.powerSkipped, false);
+    assert.equal(pending.game.hint, null);
+    assert.ok(pending.game.teams.every(t => hintIds.every(id => t.powers[id] === 0)));
     assert.deepEqual(pending.game.teams.map(t => t.powers.skipTrack), [0, 0]);
     assert.deepEqual(pending.game.teams.map(t => t.powers.doublePoints), [1, 0]);
     assert.equal(pending.game.phase, 'choosePower');
 
-    const awarded = gameReducer(pending.game, { type: 'drawReward', draw: 0.8, skipAnimation: true });
+    const options = availablePowerIds(pending.game);
+    const draw = (options.indexOf('skipTrack') + 0.5) / options.length;
+    const awarded = gameReducer(pending.game, { type: 'drawReward', draw, skipAnimation: true });
     assert.equal(awarded.phase, 'award');
     assert.equal(awarded.teams[0].score, 3);
     assert.equal(awarded.award.points, 3);
@@ -108,6 +115,33 @@ for (const version of [1, 2]) {
     assert.deepEqual(createMatchStore(() => disk).getSnapshot().match.game, spent);
   });
 }
+
+test('restaura o saldo de dicas de cada equipe e rejeita a dica com valor ou faixa incompatível', () => {
+  const game = start();
+  game.teams[0].powers.mainArtist = 2;
+  game.teams[1].powers.chorus = 3;
+  const hinted = gameReducer(game, { type: 'usePower', sourceTeam: 0, targetTeam: 0, power: 'mainArtist' });
+  for (const version of [1, 2]) {
+    const restored = createMatchStore(() => storageWith(hinted, version)).getSnapshot().match.game;
+    assert.deepEqual(restored, hinted);
+    const invalidHints = [false, 'chorus', {}, { power: 'instrumental', trackIndex: 0 },
+      { power: '__proto__', trackIndex: 0 }, { power: 'chorus', trackIndex: -1 },
+      { power: 'chorus', trackIndex: 0.5 }, { power: 'chorus', trackIndex: 1 }];
+    for (const hint of invalidHints) {
+      assert.equal(createMatchStore(() => storageWith({ ...hinted, hint }, version)).getSnapshot().issue, 'invalid');
+    }
+    const stale = { ...hinted, round: 2, trackIndex: 1 };
+    const disabled = { ...hinted, powersEnabled: false };
+    for (const invalid of [stale, disabled]) {
+      assert.equal(createMatchStore(() => storageWith(invalid, version)).getSnapshot().issue, 'invalid');
+    }
+    for (const id of hintIds) {
+      const invalid = structuredClone(hinted);
+      invalid.teams[0].powers[id] = -1;
+      assert.equal(createMatchStore(() => storageWith(invalid, version)).getSnapshot().issue, 'invalid');
+    }
+  }
+});
 
 test('retoma uma recompensa antiga de seis pontos dobrados em uma faixa geral já pontuada', () => {
   const game = start();

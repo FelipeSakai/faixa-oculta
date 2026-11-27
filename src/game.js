@@ -40,6 +40,24 @@ export const powers = {
     opponent: false,
     description: 'Antes de abrir a faixa, dobre os pontos da música e o bônus de playlist pessoal, quando houver.',
   },
+  mainArtist: {
+    name: 'Artista principal',
+    opponent: false,
+    hint: true,
+    description: 'Descubra quem é o artista principal da faixa.',
+  },
+  titleInitials: {
+    name: 'Iniciais do título',
+    opponent: false,
+    hint: true,
+    description: 'Veja a inicial de cada palavra do título.',
+  },
+  chorus: {
+    name: 'Pular pro refrão',
+    opponent: false,
+    hint: true,
+    description: 'Peça ao DJ para tocar o refrão desta faixa.',
+  },
 };
 
 const powerIds = Object.keys(powers);
@@ -60,6 +78,7 @@ export function powerBlockReason(game, sourceTeam, id) {
   } else {
     if (sourceTeam !== turn) return 'ownTurn';
     if (id === 'skipTrack') return lastTrack ? 'lastTrack' : null;
+    if (powers[id].hint) return game.hint ? 'hintUsed' : null;
     if (game.retry || game.doubled) return 'ownPowerUsed';
     if (id === 'doublePoints' && game.opened) return 'trackOpened';
   }
@@ -101,6 +120,7 @@ export function startGame({ players, goal, powersEnabled, originIds }, deck = sh
     effectSource: null,
     nextEffect: null,
     retry: null,
+    hint: null,
     powerSkipped: false,
     award: null,
     notice: null,
@@ -248,6 +268,7 @@ function advance(game) {
     effectSource: game.nextEffect ? turn : null,
     nextEffect: null,
     retry: null,
+    hint: null,
     powerSkipped: false,
     notice: game.award.power ? { team: turn, power: game.award.power } : null,
     award: null,
@@ -307,6 +328,7 @@ export function gameReducer(game, action) {
       const stock = game.teams[sourceTeam].powers;
       let changes;
       if (powers[power].opponent) changes = { effect: power, effectSource: sourceTeam };
+      else if (powers[power].hint) changes = { hint: { power, trackIndex: game.trackIndex } };
       else if (power === 'doublePoints') changes = { doubled: true };
       else changes = { retry: 'ready' };
       return {
