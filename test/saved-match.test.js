@@ -42,6 +42,42 @@ function play(store, type, details = {}) {
   return game;
 }
 
+test('retoma uma vitória corrigida e restaura o palpite da equipe seguinte', () => {
+  const storage = memoryStorage();
+  let store = createMatchStore(() => storage);
+  const match = newMatch(['Azul', 'Verde'], 3);
+  store.commit(null, match);
+  play(store, 'reveal');
+  play(store, 'mark', { mark: 'title', checked: true });
+  play(store, 'score', { skipAnimation: true });
+  play(store, 'reveal');
+  const current = play(store, 'mark', { mark: 'origin', checked: true });
+  const change = { round: 1, title: true, origin: true };
+  const win = play(store, 'correctLastRound', change);
+  store = createMatchStore(() => storage);
+  assert.equal(win.phase, 'finished');
+  assert.deepEqual(store.getSnapshot().match.game, win);
+  assert.deepEqual(play(store, 'correctLastRound', { ...change, origin: false }), current);
+});
+
+test('uma correção salva com índice inválido preserva o restante da partida', () => {
+  const storage = memoryStorage();
+  const store = createMatchStore(() => storage);
+  const match = newMatch();
+  store.commit(null, match);
+  play(store, 'reveal');
+  play(store, 'score', { skipAnimation: true });
+  const key = progressKey(match.id);
+  const progress = JSON.parse(storage.getItem(key));
+  progress.lastRound.trackIndex = -1;
+  storage.setItem(key, JSON.stringify(progress));
+  const restored = createMatchStore(() => storage);
+  assert.equal(restored.getSnapshot().match.game.lastRound, null);
+  assert.equal(restored.getSnapshot().match.game.round, 2);
+  play(restored, 'reveal');
+  assert.equal(play(restored, 'score').lastRound.round, 2);
+});
+
 test('ativa poderes em uma partida antiga e retoma sem regravar o baralho', () => {
   const storage = memoryStorage();
   const store = createMatchStore(() => storage);

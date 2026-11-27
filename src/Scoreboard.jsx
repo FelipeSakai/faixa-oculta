@@ -39,7 +39,7 @@ function ScoreAward({ points }) {
   );
 }
 
-export function Scoreboard({ players, scores, active, winner, goal, award }) {
+export function Scoreboard({ players, scores, active, winner, goal, award, children }) {
   const listRef = useRef(null);
   const many = players.length > 2;
   const highlighted = winner ?? active;
@@ -67,6 +67,7 @@ export function Scoreboard({ players, scores, active, winner, goal, award }) {
     <aside className="scoreboard" aria-label="Placar">
       <div className="score-top">
         <h2><Trophy size={16} /> Placar</h2>
+        {children}
         <span>Meta de {numberFormat.format(goal)} {goal === 1 ? 'pt' : 'pts'}</span>
       </div>
       <div

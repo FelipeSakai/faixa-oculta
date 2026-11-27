@@ -15,7 +15,7 @@ import { playlistPreferenceKey, previousPlaylistSelection, readPlaylistPreferenc
 import { PlaylistPicker } from './PlaylistPicker.jsx';
 import PowerPractice from './PowerPractice.jsx';
 import { PowerUse } from './PowerPicker.jsx';
-import { gameReducer, getRound, powers, startGame } from './game.js';
+import { gameReducer, getLastRound, getRound, powers, startGame } from './game.js';
 import { createMatchStore, progressKey, saveKey } from './saved-match.js';
 import cover from './record-cover.jpg';
 import './style.css';
@@ -403,6 +403,53 @@ function MarkChoice({ title, label = title, points, checked, disabled, onChange 
   );
 }
 
+function RoundCorrection({ record, track, teamName, dispatch }) {
+  const dialog = useRef(null);
+  const [draft, setDraft] = useState({ title: record.title, origin: record.origin });
+  // Dismiss a draft if another tab scores or corrects that round.
+  useLayoutEffect(() => { dialog.current?.close(); }, [record.round, record.points]);
+
+  return (
+    <>
+      <button type="button" className="correction-trigger" aria-haspopup="dialog"
+        onClick={() => {
+          setDraft({ title: record.title, origin: record.origin });
+          dialog.current.showModal();
+        }}>
+        <RotateCcw size={14} aria-hidden="true" /> Corrigir última rodada
+      </button>
+      <dialog className="rules-dialog correction-dialog" ref={dialog} aria-labelledby="correction-title">
+        <form onSubmit={event => {
+          event.preventDefault();
+          dialog.current.close();
+          dispatch({ type: 'correctLastRound', round: record.round, ...draft });
+        }}>
+          <h2 id="correction-title">Corrigir rodada {record.round}</h2>
+          <div className="correction-track">
+            <span>{teamName}</span>
+            <strong>{track.title}</strong>
+            <span>{track.artist}</span>
+          </div>
+          <div className="score-options">
+            <MarkChoice title="Música" label="Acertou a música" points={record.titlePoints} checked={draft.title}
+              onChange={title => setDraft(current => ({ ...current, title }))} />
+            {record.originPoints > 0 && (
+              <MarkChoice title="Acertou de quem é?" points={record.originPoints} checked={draft.origin}
+                onChange={origin => setDraft(current => ({ ...current, origin }))} />
+            )}
+          </div>
+          {record.originPoints > 0 && <p className="correction-detail">Bônus de {peopleList.format(record.personalOrigins.map(id => originPeople[id]))}</p>}
+          {record.power && <p className="correction-detail">Poder sorteado · <strong>{powers[record.power].name}</strong></p>}
+          <div className="replace-actions">
+            <button type="button" className="button button-neutral" onClick={() => dialog.current.close()}>Cancelar</button>
+            <button type="submit" className="button button-primary">Salvar correção</button>
+          </div>
+        </form>
+      </dialog>
+    </>
+  );
+}
+
 function RewardPanel({ award, players, headingRef, onContinue }) {
   const power = powers[award.power];
   return (
@@ -425,6 +472,8 @@ function Game({ match, dispatch, onBack, onSetup, direction }) {
   const { round, deck, trackIndex, phase, marks, winner, award } = game;
   const track = deck[trackIndex];
   const roundOptions = getRound(game);
+  const lastRound = getLastRound(game);
+  const finishedRound = lastRound?.round ?? round;
   const { turn, titlePoints, originPoints, personalOrigins, endsAfterRound, canEarnPower } = roundOptions;
   const scores = game.teams.map(team => team.score);
   const awarding = phase === 'award';
@@ -460,7 +509,11 @@ function Game({ match, dispatch, onBack, onSetup, direction }) {
         </div>
         <div className="game-layout">
           <Scoreboard players={players} scores={scores} active={phase === 'finished' ? null : turn} winner={winner} goal={game.goal}
-            award={awarding || phase === 'choosePower' ? award : null} />
+            award={awarding || phase === 'choosePower' ? award : null}>
+            {lastRound && phase !== 'choosePower' && (!awarding || rewardPower) && (
+              <RoundCorrection record={lastRound} track={deck[lastRound.trackIndex]} teamName={players[lastRound.team]} dispatch={dispatch} />
+            )}
+          </Scoreboard>
           {phase === 'listen' && <TrackPlayer game={game} round={roundOptions} players={players} dispatch={dispatch} />}
           {phase === 'choosePower' && <p role="status">Sorteando o poder da equipe…</p>}
           {rewardPower && <RewardPanel award={award} players={players} headingRef={phaseHeading}
@@ -520,9 +573,9 @@ function Game({ match, dispatch, onBack, onSetup, direction }) {
               <div className="win-mark"><Check size={32} /></div>
               <h2 ref={phaseHeading} id="result-title" tabIndex={-1}>{winner === null ? 'A seleção acabou' : players.length === 1 ? 'Você venceu!' : players[winner] + ' venceu!'}</h2>
               {winner === null ? (
-                <p>{round} {round === 1 ? 'rodada jogada' : 'rodadas jogadas'}.</p>
+                <p>{finishedRound} {finishedRound === 1 ? 'rodada jogada' : 'rodadas jogadas'}.</p>
               ) : (
-                <p>{scores[winner]} {scores[winner] === 1 ? 'ponto' : 'pontos'} em {round} {round === 1 ? 'rodada' : 'rodadas'}.</p>
+                <p>{scores[winner]} {scores[winner] === 1 ? 'ponto' : 'pontos'} em {finishedRound} {finishedRound === 1 ? 'rodada' : 'rodadas'}.</p>
               )}
               <button className="button button-primary full-width" onClick={onSetup}>Preparar outra partida <ArrowRight size={20} /></button>
             </section>
@@ -602,7 +655,8 @@ function App() {
 
   function begin(settings, expected) {
     const id = globalThis.crypto?.randomUUID?.() ?? Date.now().toString(36) + Math.random().toString(36);
-    const next = { id, players: settings.players, game: startGame(settings) };
+    const deck = store.createDeck(settings.originIds, expected);
+    const next = { id, players: settings.players, game: startGame(settings, deck) };
     if (store.commit(expected, next)) resume(id);
     else navigate('home', -1);
   }

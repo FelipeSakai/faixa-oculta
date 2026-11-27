@@ -1,4 +1,6 @@
-import { getRound, powers } from './game.js';
+import { getLastRound, getRound, powers } from './game.js';
+import { shuffleTracks } from './catalog.js';
+import { includePlayedMatch, readRecentMatches, restoreTrackHistory } from './recent-tracks.js';
 
 // Keep the original pointer so upgrades find the active game and stale tabs see changes.
 export const saveKey = 'faixa-oculta.partida.v1';
@@ -82,6 +84,7 @@ export function createMatchStore(storage = () => window.localStorage) {
   let raw = null;
   let lastProgress = null;
   let savedSetup = null;
+  let recentMatches = [];
   let snapshot = { match: null, issue: null };
   const listeners = new Set();
 
@@ -135,15 +138,19 @@ export function createMatchStore(storage = () => window.localStorage) {
       const clearOrigin = !game.award && game.marks.origin && !getRound(game).originPoints;
       match = { ...match, game: {
         ...game, teams: game.teams.map(restoreTeam),
+        ...(game.lastRound && !getLastRound(game) ? { lastRound: null } : {}),
+        ...restoreTrackHistory(game),
         marks: clearOrigin ? { ...game.marks, origin: false } : game.marks,
         powerSkipped: game.powerSkipped ?? false,
         effectSource: game.effect ? (game.effectSource ?? previousTeam) : null,
         nextEffect: game.nextEffect ?? null,
       } };
       savedSetup = setup;
+      recentMatches = readRecentMatches(setup?.recentMatches);
       publish(match);
     } else {
       savedSetup = null;
+      recentMatches = [];
       publish(null, stored === null ? null : 'invalid');
     }
     return true;
@@ -153,6 +160,7 @@ export function createMatchStore(storage = () => window.localStorage) {
     // A suspended tab can wake up after another tab has already scored this round.
     const readable = refresh();
     if (snapshot.match !== expected) return false;
+    if (expected && expected.id !== next.id) recentMatches = includePlayedMatch(recentMatches, expected);
     if (!readable) {
       publish(next, 'unavailable');
       return true;
@@ -163,7 +171,8 @@ export function createMatchStore(storage = () => window.localStorage) {
     const encoded = JSON.stringify(progress);
     const pointer = needsSetup ? JSON.stringify({ version: 2, id: next.id }) : raw;
     const previousSetup = savedSetup;
-    const setup = needsSetup ? { id: next.id, players: next.players, deck, goal, powersEnabled: progress.powersEnabled } : savedSetup;
+    const setup = needsSetup ? { id: next.id, players: next.players, deck, goal,
+      powersEnabled: progress.powersEnabled, recentMatches } : savedSetup;
     let wroteSetup = false;
     try {
       // Publish the pointer last. A failed migration leaves the original save readable.
@@ -193,6 +202,8 @@ export function createMatchStore(storage = () => window.localStorage) {
   refresh();
   return {
     commit, refresh,
+    createDeck: (originIds, expected = snapshot.match, random = Math.random) =>
+      shuffleTracks(random, originIds, includePlayedMatch(recentMatches, expected)),
     getSnapshot: () => snapshot,
     subscribe(listener) {
       listeners.add(listener);

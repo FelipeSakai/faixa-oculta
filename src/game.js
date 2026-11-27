@@ -92,6 +92,7 @@ export function startGame({ players, goal, powersEnabled, originIds }, deck = sh
     })),
     round: 1,
     trackIndex: 0,
+    unheardSkips: [],
     phase: 'listen',
     opened: false,
     doubled: false,
@@ -107,14 +108,19 @@ export function startGame({ players, goal, powersEnabled, originIds }, deck = sh
   };
 }
 
+function pointValues(track, doubled) {
+  const titlePoints = doubled ? 4 : 2;
+  const personalOrigins = personalOriginIds(track.origins);
+  const originPoints = personalOrigins.length ? titlePoints / 2 : 0;
+  return { titlePoints, personalOrigins, originPoints };
+}
+
 export function getRound(game) {
   const turn = (game.round - 1) % game.teams.length;
   const team = game.teams[turn];
   const lastTrack = game.trackIndex === game.deck.length - 1;
   const listening = game.phase === 'listen';
-  const titlePoints = game.doubled ? 4 : 2;
-  const personalOrigins = personalOriginIds(game.deck[game.trackIndex].origins);
-  const originPoints = personalOrigins.length ? titlePoints / 2 : 0;
+  const { titlePoints, personalOrigins, originPoints } = pointValues(game.deck[game.trackIndex], game.doubled);
   const points = (game.marks.title ? titlePoints : 0) + (game.marks.origin ? originPoints : 0);
 
   return {
@@ -134,6 +140,69 @@ export function getRound(game) {
 
 function updateTeam(teams, turn, changes) {
   return teams.map((team, index) => index === turn ? { ...team, ...changes } : team);
+}
+
+function recordRound(game, award) {
+  return {
+    round: game.round,
+    trackIndex: game.trackIndex,
+    doubled: game.doubled,
+    title: game.marks.title,
+    origin: game.marks.origin,
+    fast: game.marks.fast,
+    team: award.team,
+    points: award.points,
+    power: award.power,
+  };
+}
+
+function validRecord(game, last) {
+  if (!Number.isSafeInteger(last.round) || last.round < 1 || !Number.isSafeInteger(last.trackIndex) ||
+      last.trackIndex < last.round - 1 || last.trackIndex >= game.deck.length ||
+      last.team !== (last.round - 1) % game.teams.length ||
+      ![last.doubled, last.title, last.origin, last.fast].every(value => typeof value === 'boolean') ||
+      !(last.power === null || powerIds.includes(last.power))) return false;
+  if (last.power && (!last.fast || !availablePowerIds(game).includes(last.power))) return false;
+  // Old versions could credit an origin on a general playlist. Preserve that actual amount.
+  const credited = ((last.title ? 2 : 0) + (last.origin ? 1 : 0)) * (last.doubled ? 2 : 1);
+  if (last.points !== credited || last.points > game.teams[last.team].score) return false;
+
+  const sameAward = game.award?.team === last.team && game.award.points === last.points &&
+    game.award.power === last.power;
+  if (last.round === game.round) {
+    if (game.phase === 'finished') {
+      const winner = game.teams[last.team].score >= game.goal ? last.team : null;
+      if (game.winner !== winner || (winner === null && last.trackIndex !== game.deck.length - 1)) return false;
+    }
+    return (game.phase === 'award' || game.phase === 'finished') && sameAward && last.resumePhase === undefined &&
+      last.trackIndex === game.trackIndex && last.doubled === game.doubled &&
+      last.title === game.marks.title && last.origin === game.marks.origin && last.fast === game.marks.fast;
+  }
+  if (last.round !== game.round - 1 || last.trackIndex >= game.trackIndex) return false;
+  if (game.phase === 'finished') {
+    return sameAward && game.winner === last.team && game.teams[last.team].score >= game.goal &&
+      (last.resumePhase === 'listen' || last.resumePhase === 'reveal');
+  }
+  return last.resumePhase === undefined && (game.phase === 'listen' || game.phase === 'reveal') && !game.award;
+}
+
+function lastRecord(game) {
+  if (game.lastRound !== undefined) {
+    return game.lastRound && validRecord(game, game.lastRound) ? game.lastRound : null;
+  }
+  // Older saves still have the complete result until the following turn starts.
+  if ((game.phase === 'award' || game.phase === 'finished') && game.award) {
+    const last = recordRound(game, game.award);
+    return validRecord(game, last) ? last : null;
+  }
+  return null;
+}
+
+export function getLastRound(game) {
+  const last = lastRecord(game);
+  if (!last) return null;
+  const values = pointValues(game.deck[last.trackIndex], last.doubled);
+  return { ...last, ...values, origin: Boolean(values.originPoints && last.origin) };
 }
 
 function advance(game) {
@@ -160,10 +229,45 @@ function advance(game) {
   };
 }
 
+function correctLastRound(game, action) {
+  const last = getLastRound(game);
+  const { round, title, origin } = action;
+  if (!last || round !== last.round || typeof title !== 'boolean' || typeof origin !== 'boolean' ||
+      (origin && !last.originPoints) || (title === last.title && origin === last.origin)) return game;
+
+  const points = (title ? last.titlePoints : 0) + (origin ? last.originPoints : 0);
+  const score = game.teams[last.team].score - last.points + points;
+  const teams = updateTeam(game.teams, last.team, { score });
+  const { resumePhase, ...previous } = game.lastRound ?? recordRound(game, game.award);
+  const lastRound = { ...previous, title, origin, points };
+  const award = { team: last.team, points, power: last.power };
+  const winner = score >= game.goal ? last.team : null;
+  const finished = winner !== null || last.trackIndex === game.deck.length - 1;
+
+  if (game.round === round) {
+    const corrected = { ...game, teams, lastRound, award, winner, marks: { ...game.marks, title, origin } };
+    if (finished) return { ...corrected, phase: 'finished' };
+    return game.phase === 'finished' ? advance(corrected) : corrected;
+  }
+
+  // Leave the following turn exactly where it was, including any stock already spent.
+  // Only its phase is suspended while a corrected victory is on screen.
+  if (finished) {
+    return {
+      ...game, teams, phase: 'finished', winner, award,
+      lastRound: { ...lastRound, resumePhase: resumePhase ?? game.phase },
+    };
+  }
+  if (resumePhase) return { ...game, teams, lastRound, phase: resumePhase, winner: null, award: null };
+  return { ...game, teams, lastRound };
+}
+
 export function gameReducer(game, action) {
   const { turn, team, canSwap, canRetry, canEarnPower, endsAfterRound, points, originPoints } = getRound(game);
 
   switch (action.type) {
+    case 'correctLastRound':
+      return correctLastRound(game, action);
     case 'enablePowers':
       return game.phase === 'listen' && !game.powersEnabled ? { ...game, powersEnabled: true } : game;
     case 'openTrack':
@@ -183,7 +287,10 @@ export function gameReducer(game, action) {
       const stock = game.teams[sourceTeam].powers;
       let changes;
       if (powers[power].opponent) changes = { effect: power, effectSource: sourceTeam };
-      else if (power === 'skipTrack') changes = { trackIndex: game.trackIndex + 1, opened: false, powerSkipped: true };
+      else if (power === 'skipTrack') {
+        changes = { trackIndex: game.trackIndex + 1, opened: false, powerSkipped: true };
+        if (!game.opened) changes.unheardSkips = [...(game.unheardSkips ?? []), game.trackIndex];
+      }
       else if (power === 'doublePoints') changes = { doubled: true };
       else changes = { retry: 'ready' };
       return {
@@ -221,17 +328,19 @@ export function gameReducer(game, action) {
       if (earnsPower && !power) return game;
       const teamChanges = { score: pending ? team.score : team.score + points };
       if (power) teamChanges.powers = { ...team.powers, [power]: team.powers[power] + 1 };
+      const award = { team: turn, points: pending ? game.award.points : points, power };
       const scored = {
         ...game,
         phase: 'award',
         teams: updateTeam(game.teams, turn, teamChanges),
-        award: { team: turn, points: pending ? game.award.points : points, power },
+        award,
+        lastRound: recordRound(game, award),
       };
       if (power) return scored;
       return scored.award.points === 0 || action.skipAnimation ? advance(scored) : scored;
     }
     case 'advance':
-      return game.phase === 'award' ? advance(game) : game;
+      return game.phase === 'award' ? advance({ ...game, lastRound: lastRecord(game) }) : game;
     default:
       return game;
   }

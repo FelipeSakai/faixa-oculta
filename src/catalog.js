@@ -60,6 +60,18 @@ for (const collection of collections) {
 
 export const trackCount = tracksByUrl.size;
 
+let songKeys;
+function songKeyByUrl() {
+  if (!songKeys) {
+    songKeys = new Map();
+    for (const [url, track] of tracksByUrl) {
+      const key = (track.title.trim() + '\u0000' + track.artist.trim()).normalize('NFC').toLowerCase();
+      songKeys.set(url, key);
+    }
+  }
+  return songKeys;
+}
+
 export function tracksForOrigins(ids = allOriginIds) {
   const selected = new Set(ids);
   const tracks = [];
@@ -70,12 +82,22 @@ export function tracksForOrigins(ids = allOriginIds) {
   return tracks;
 }
 
-export function shuffleTracks(random = Math.random, originIds = allOriginIds) {
+export function shuffleTracks(random = Math.random, originIds = allOriginIds, recentMatches = []) {
   const shuffled = tracksForOrigins(originIds);
   for (let index = shuffled.length - 1; index > 0; index--) {
     const swapIndex = Math.floor(random() * (index + 1));
     [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
   }
-  return shuffled;
+  if (!recentMatches.length) return shuffled;
+  const keys = songKeyByUrl();
+  const lastPlayed = new Map();
+  recentMatches.forEach((urls, index) => {
+    for (const url of urls) {
+      if (keys.has(url)) lastPlayed.set(keys.get(url), index);
+    }
+  });
+  const rank = track => lastPlayed.get(keys.get(track.url)) ?? -1;
+  // Stable sorting preserves the shuffle among tracks last heard in the same match.
+  return shuffled.sort((a, b) => rank(a) - rank(b));
 }
 

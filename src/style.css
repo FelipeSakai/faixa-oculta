@@ -748,9 +748,32 @@ input::placeholder { color: #aa9e8a; }
   flex-wrap: wrap;
   margin-bottom: 5px;
 }
-.score-top h2 { display: inline-flex; align-items: center; gap: 6px; font-size: .86rem; font-weight: 830; }
-.score-top h2 svg { color: var(--flame-light); }
+.score-top > h2 { display: inline-flex; align-items: center; gap: 6px; font-size: .86rem; font-weight: 830; }
+.score-top > h2 svg { color: var(--flame-light); }
 .score-top > span { font-size: .75rem; color: var(--muted); }
+.score-top:has(.correction-trigger) {
+  display: grid;
+  grid-template-columns: minmax(min-content, 1fr) minmax(0, auto);
+  grid-template-areas: 'title edit' 'goal edit';
+}
+.score-top:has(.correction-trigger) > h2 { grid-area: title; align-self: end; }
+.score-top:has(.correction-trigger) > span { grid-area: goal; align-self: start; overflow-wrap: anywhere; }
+.correction-trigger {
+  grid-area: edit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 44px;
+  padding-inline: 5px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--flame-light);
+  font-size: .76rem;
+  font-weight: 750;
+}
+.correction-trigger:hover { background: var(--surface-hover); }
 .score-rows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
 .score-rows[data-solo="true"] { grid-template-columns: minmax(0, 1fr); }
 .score-rows[data-many="true"] {
@@ -1044,6 +1067,15 @@ input::placeholder { color: #aa9e8a; }
 .replace-dialog p { margin-block: 10px 18px; color: var(--muted); }
 .replace-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .replace-actions .button { min-height: 46px; padding: 8px 12px; }
+.correction-dialog { max-width: 410px; padding: 18px; }
+.correction-dialog h2 { font: 400 1.4rem/1.15 var(--font-display); }
+.correction-track { display: grid; gap: 2px; margin: 14px 0; overflow-wrap: anywhere; }
+.correction-track strong { font-size: 1.12rem; }
+.correction-track span, .correction-detail { color: var(--muted); font-size: .85rem; }
+.correction-track span:first-child { color: var(--flame-light); font-weight: 750; }
+.correction-detail { margin-block: 4px; }
+.correction-dialog .replace-actions { margin-top: 16px; }
+.correction-dialog .button-primary { flex: 1; }
 .save-warning { padding-block: 8px; color: var(--paper); font-size: .88rem; }
 .rules-content { --rules-padding: 18px; padding: 0 var(--rules-padding) var(--rules-padding); }
 .dialog-head {

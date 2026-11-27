@@ -24,6 +24,8 @@ O treino pode ser aberto pelo endereço do jogo com `#teste-poderes` no final. E
 
 Em **Preparar partida**, toque no botão com a quantidade de playlists e escolha pelo menos uma. **Aplicar seleção** lembra as listas neste navegador, inclusive depois de fechar a aba. Você pode mudar a escolha antes de cada partida. No primeiro uso, todas aparecem marcadas. Se já houver uma partida de uma versão anterior, a configuração começa com as playlists daquela partida.
 
+O sorteio usa apenas as playlists marcadas. As músicas que o DJ abriu ou revelou nas três últimas partidas jogadas neste navegador vão para o fim do baralho. Quando a seleção só tiver faixas recentes, aparecem primeiro as ouvidas há mais partidas. Uma faixa que estava oculta quando o DJ a pulou continua disponível entre as inéditas.
+
 O contador mostra as faixas únicas. Uma música compartilhada continua no sorteio quando alguma de suas listas está marcada.
 
 - **my mind**, de Felipe Sakai, tem 70 faixas famosas e 30 de estilos variados. Para a seleção de 26/11/2026, cruzamos as 175 posições documentadas da playlist com o ranking global de reproduções por música. As 70 escolhidas como famosas ultrapassavam 870 milhões de reproduções cada. As outras 30 trazem 30 artistas principais diferentes. Os dois grupos entram juntos no sorteio. [Playlist no Spotify](https://open.spotify.com/playlist/5tB8NlRXqnMo6pDehea3VW) · [Ranking de reproduções por música](https://kworb.net/spotify/songs.html)
@@ -54,6 +56,8 @@ npm run dev
 ## Salvamento e retomada
 
 O jogo grava a ordem das músicas, as origens habilitadas para cada faixa e a configuração uma vez por partida no `localStorage`. Cada jogada atualiza um registro pequeno com o progresso. Ao voltar ao mesmo endereço no mesmo perfil, escolha **Continuar partida**. Partidas da versão anterior são convertidas na retomada, usando a ordem, as faixas e o placar já salvos. Depois do fim, **Ver resultado** recupera o placar final.
+
+No placar, **Corrigir última rodada** permite ajustar os acertos da música e, quando disponível, o bônus da playlist pessoal. A correção mantém o multiplicador da rodada e o poder que já saiu, mesmo que a equipe já o tenha usado. Se o novo placar mudar quem atingiu a meta, o jogo atualiza o resultado ou retoma a partida.
 
 O botão **Nova partida** abre a configuração e pede confirmação antes de substituir uma partida em andamento. Limpar os dados do site, trocar de navegador, mudar de endereço ou encerrar uma sessão privada pode tirar o acesso ao salvamento. Se o navegador bloquear a gravação, o jogo avisa e continua na aba aberta.
 
