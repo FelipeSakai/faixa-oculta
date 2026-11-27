@@ -7,6 +7,7 @@ import matchola from './data/matchola-flashback.json' with { type: 'json' };
 import yaschan from './data/yaschan-antidepressiva.json' with { type: 'json' };
 import bela from './data/bela-2028.json' with { type: 'json' };
 import valota from './data/valota-number-2.json' with { type: 'json' };
+import leoWillySakai from './data/leo-willy-sakai.json' with { type: 'json' };
 import classics from './data/classicos-br.json' with { type: 'json' };
 import internationalClassics from './data/classicos-internacionais.json' with { type: 'json' };
 
@@ -19,6 +20,7 @@ const collections = [
   { id: 'yaschan', label: yaschan.playlist.name, person: yaschan.playlist.owner, tracks: yaschan.tracks },
   { id: 'bela', label: bela.playlist.name, person: bela.playlist.owner, tracks: bela.tracks },
   { id: 'valota', label: valota.playlist.name, person: valota.playlist.listener, displayLabel: valota.playlist.game_label, tracks: valota.tracks },
+  { id: 'leo-willy-sakai', label: leoWillySakai.playlist.name, person: leoWillySakai.playlist.game_label, displayLabel: leoWillySakai.playlist.game_label, tracks: leoWillySakai.tracks },
   { id: 'classicos-br', label: classics.name, tracks: classics.tracks },
   { id: 'classicos-internacionais', label: internationalClassics.name, tracks: internationalClassics.tracks },
 ];
