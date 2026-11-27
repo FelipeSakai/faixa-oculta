@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Check, LockKeyhole, X, Zap } from 'lucide-react';
 import { powerBlockReason, powers, usablePowerIds } from './game.js';
 
-const ids = Object.keys(powers);
+const menuPowerIds = Object.keys(powers).filter(id => id !== 'skipTrack');
 const blockedDetails = {
   ownTurn: 'Só na vez da própria equipe.',
   opponentTurn: 'Só na vez de uma equipe rival.',
@@ -25,8 +25,8 @@ export function PowerUse({ game, turn, players, onUse }) {
   const [selected, setSelected] = useState(null);
   const owners = game.teams.map((team, index) => ({
     index,
-    held: ids.filter(id => team.powers[id] > 0),
-    usable: usablePowerIds(game, index),
+    held: menuPowerIds.filter(id => team.powers[id] > 0),
+    usable: usablePowerIds(game, index).filter(id => menuPowerIds.includes(id)),
   })).filter(owner => owner.held.length);
   const source = owners.find(owner => owner.index === selectedTeam) ?? defaultOwner(owners, turn);
   const choices = source?.usable ?? [];
@@ -61,7 +61,7 @@ export function PowerUse({ game, turn, players, onUse }) {
           </div>
           {owners.length === 0 ? (
             <p className="power-empty" id="sem-poder">
-              <strong>Nenhum poder guardado.</strong>
+              <strong>Nenhum poder para escolher.</strong>
               Acerte o título em até 3 s de áudio para ganhar um poder se a partida continuar.
             </p>
           ) : (

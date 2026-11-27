@@ -67,6 +67,7 @@ function practiceHint(game, turn) {
   if (game.retry === 'ready') return game.opened ? 'Simule um erro e peça o segundo palpite.' : 'Simule a faixa para tentar o primeiro palpite.';
   if (game.effect) return game.opened ? 'Teste concluído. O ataque valeu nesta rodada.' : 'Simule a faixa com a regra indicada para o DJ.';
   if (game.powerSkipped) return game.opened ? 'Teste concluído. A equipe ouviu a nova faixa.' : 'Simule a nova faixa. A vez continua com a mesma equipe.';
+  if (game.notice?.power === 'skipTrack') return 'Toque em Trocar faixa para usar o pulo que a Equipe 4 ganhou.';
   if (game.notice) return turn === teamFour ? 'Teste o poder sorteado na vez da Equipe 4.' : 'Use o poder sorteado da Equipe 4 contra a Equipe 2.';
   if (game.opened) return 'Toque em Trocar faixa para usar um pulo da Equipe 2.';
   return 'Em Usar poder, teste um poder da Equipe 2 ou um ataque da Equipe 4.';

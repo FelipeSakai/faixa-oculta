@@ -33,7 +33,7 @@ export const powers = {
   skipTrack: {
     name: 'Pular música',
     opponent: false,
-    description: 'Passe para outra faixa na mesma rodada.',
+    description: 'Mais 1 pulo no botão Trocar faixa.',
   },
   doublePoints: {
     name: 'Vale o dobro',

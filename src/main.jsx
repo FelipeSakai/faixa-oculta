@@ -320,6 +320,7 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
   const track = game.deck[game.trackIndex];
   const { url, label: trackLabel, accessibleLabel, Icon: TrackIcon } = getTrackAction(track, game.effect);
   const { team, turn, canSwap, canRetry, remainingSkips } = round;
+  const powerNotice = game.notice?.power === 'skipTrack' ? null : game.notice;
   const target = players[(turn + 1) % players.length];
 
   useLayoutEffect(() => {
@@ -356,7 +357,7 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
             <Zap size={16} aria-hidden="true" /> Ativar poderes
           </button>}
         </div>
-        {(game.effect || game.nextEffect || game.notice || game.retry || game.powerSkipped || game.doubled) && (
+        {(game.effect || game.nextEffect || powerNotice || game.retry || game.powerSkipped || game.doubled) && (
           <div className="round-notices" role="status">
             {game.effect && <div className="applied-power">
               <strong><Zap size={15} aria-hidden="true" />
@@ -373,7 +374,7 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
             {game.retry && <span><RotateCcw size={14} aria-hidden="true" /> {game.retry === 'ready' ? 'Duas tentativas ativas.' : 'Segundo palpite liberado.'}</span>}
             {game.doubled && <span><Zap size={14} aria-hidden="true" /> Pontos em dobro nesta rodada.</span>}
             {game.powerSkipped && <span><Shuffle size={14} aria-hidden="true" /> Música pulada. A vez continua com {players[turn]}.</span>}
-            {game.notice && <span><Zap size={14} aria-hidden="true" /> {players.length === 1 ? 'Você ganhou' : players[game.notice.team] + ' ganhou'}: {powers[game.notice.power].name}</span>}
+            {powerNotice && <span><Zap size={14} aria-hidden="true" /> {players.length === 1 ? 'Você ganhou' : players[powerNotice.team] + ' ganhou'}: {powers[powerNotice.power].name}</span>}
           </div>
         )}
         {practice ? (
@@ -465,7 +466,7 @@ function RewardPanel({ award, players, headingRef, onContinue }) {
   const power = powers[award.power];
   return (
     <section className="round-panel power-award" aria-labelledby="reward-title">
-      <p id="reward-team" className="choice-context">{players[award.team]} ganhou um poder</p>
+      <p id="reward-team" className="choice-context">{players[award.team]} ganhou {award.power === 'skipTrack' ? 'um pulo' : 'um poder'}</p>
       <h2 id="reward-title" ref={headingRef} tabIndex={-1} aria-describedby="reward-team reward-description">{power.name}</h2>
       <p id="reward-description" className="choice-context">{power.description}</p>
       <button type="button" className="button button-primary full-width" onClick={onContinue}>
