@@ -134,8 +134,10 @@ function ScreenHeading({ title, children }) {
   return <h1 className="screen-title" tabIndex={-1} ref={ref}>{title}{children}</h1>;
 }
 
-function Setup({ onBack, onStart, direction, preferredPlaylists, previousDeck, onApplyPlaylists }) {
+function Setup({ onBack, onStart, direction, preferredPlaylists, previousDeck, onApplyPlaylists, hasRecentTracks, onClearHistory }) {
   const [format, setFormat] = useState('solo');
+  const [historyCleared, setHistoryCleared] = useState(false);
+  const showCleared = historyCleared && !hasRecentTracks;
   const originIds = useMemo(() => preferredPlaylists ?? previousPlaylistSelection(previousDeck), [preferredPlaylists, previousDeck]);
   const [powersEnabled, setPowersEnabled] = useState(true);
   const [goal, setGoal] = useState(String(goalPresets[0]));
@@ -180,7 +182,16 @@ function Setup({ onBack, onStart, direction, preferredPlaylists, previousDeck, o
         <div className="setup-layout">
           <div className="setup-intro">
             <ScreenHeading title="Preparar partida" />
-            <PlaylistPicker selected={originIds} onApply={onApplyPlaylists} />
+            <div className="playlist-controls">
+              <PlaylistPicker selected={originIds} onApply={onApplyPlaylists} />
+              <button type="button" className="clear-history" disabled={!hasRecentTracks} data-cleared={showCleared}
+                title="Liberar as músicas já jogadas para o próximo sorteio"
+                onClick={() => setHistoryCleared(onClearHistory())}>
+                {showCleared ? <Check size={15} aria-hidden="true" /> : <RotateCcw size={15} aria-hidden="true" />}
+                {showCleared ? 'Histórico limpo' : 'Limpar histórico'}
+              </button>
+              <span className="sr-only" role="status">{showCleared && 'Histórico limpo. Todas as músicas selecionadas podem sair no próximo sorteio.'}</span>
+            </div>
             <div className="setup-cover" aria-hidden="true"><img src={cover} alt="" /></div>
           </div>
 
@@ -694,7 +705,8 @@ function App() {
         )}
         {screen === 'setup' && (
           <Setup key="setup" direction={direction} onBack={() => navigate('home', -1)} onStart={requestStart}
-            preferredPlaylists={preferredPlaylists} previousDeck={match?.game.deck} onApplyPlaylists={applyPlaylists} />
+            preferredPlaylists={preferredPlaylists} previousDeck={match?.game.deck} onApplyPlaylists={applyPlaylists}
+            hasRecentTracks={store.hasRecentTracks()} onClearHistory={() => store.clearRecentTracks(match)} />
         )}
         {screen === 'game' && (
           <Game key={match.id} match={match} dispatch={dispatch} direction={direction} onBack={() => navigate('home', -1)} onSetup={() => navigate('setup', 1)} />

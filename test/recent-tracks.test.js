@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { shuffleTracks, tracksForOrigins } from '../src/catalog.js';
 import { gameReducer, startGame } from '../src/game.js';
+import { readPlaylistPreference, writePlaylistPreference } from '../src/playlist-preference.js';
 import { createMatchStore, saveKey } from '../src/saved-match.js';
 
 const selection = ['my-mind'];
@@ -192,4 +193,141 @@ test('o primeiro sorteio após um save antigo usa só o trecho que o progresso p
     replace(store, match('nova', catalog.slice(5, 8)));
     assert.deepEqual(JSON.parse(disk.getItem('faixa-oculta.baralho.nova')).recentMatches, [expected]);
   }
+});
+
+test('limpa partidas anteriores e a faixa revelada sem alterar o jogo, a correção ou a seleção de playlists', () => {
+  const disk = storage();
+  const openStore = () => createMatchStore(() => disk);
+  let store = openStore();
+  const shared = catalog.find(track => track.title === '505');
+  const chosen = ['junior-5'];
+  writePlaylistPreference(chosen, () => disk);
+  for (const [id, track] of [['primeira', shared], ['segunda', catalog[1]]]) {
+    replace(store, match(id, [track]));
+    play(store, { type: 'reveal' }, { type: 'score' });
+  }
+  const currentDeck = catalog.slice(2, 8);
+  replace(store, match('atual', currentDeck));
+  play(store, { type: 'openTrack' }, { type: 'reveal' },
+    { type: 'mark', mark: 'title', checked: true }, { type: 'mark', mark: 'fast', checked: true },
+    { type: 'score', draw: 0 }, { type: 'advance' },
+    { type: 'usePower', sourceTeam: 0, targetTeam: 1, power: 'tenSeconds' },
+    { type: 'reveal' }, { type: 'mark', mark: 'title', checked: true });
+  assert.equal(store.hasRecentTracks(), true);
+  assert.equal(store.createDeck(chosen, undefined, keepOrder).at(-1).url, shared.url);
+  const before = structuredClone(store.getSnapshot().match);
+  assert.ok(store.clearRecentTracks(store.getSnapshot().match));
+  assert.equal(store.hasRecentTracks(), false);
+
+  store = openStore();
+  const after = store.getSnapshot().match;
+  assert.equal(after.id, before.id);
+  for (const key of ['round', 'trackIndex', 'deck', 'phase', 'marks', 'teams', 'goal', 'effect', 'effectSource', 'lastRound']) {
+    assert.deepEqual(after.game[key], before.game[key], key);
+  }
+  assert.deepEqual(readPlaylistPreference(() => disk), chosen);
+  assert.deepEqual(store.createDeck(chosen, undefined, keepOrder), tracksForOrigins(chosen));
+  assert.deepEqual(store.createDeck(selection, undefined, keepOrder), catalog);
+  assert.equal(store.hasRecentTracks(), false);
+
+  play(store, { type: 'correctLastRound', round: 1, title: true, origin: true });
+  assert.equal(store.getSnapshot().match.game.teams[0].score, 3);
+  assert.equal(store.getSnapshot().match.game.effect, 'tenSeconds');
+  assert.equal(store.hasRecentTracks(), false);
+  play(store, { type: 'score', skipAnimation: true });
+  assert.equal(store.getSnapshot().match.game.round, 3);
+  assert.equal(store.hasRecentTracks(), false);
+  play(store, { type: 'openTrack' });
+  assert.equal(store.hasRecentTracks(), true);
+  replace(store, match('seguinte', catalog.slice(10, 14)));
+  store = openStore();
+  assert.deepEqual(urls(store.createDeck(selection, undefined, keepOrder)), [
+    ...urls(catalog.filter(track => track.url !== currentDeck[2].url)), currentDeck[2].url,
+  ]);
+});
+
+test('limpar com a faixa oculta permite contá-la ao revelar, mas abrir antes da limpeza não a conta outra vez', () => {
+  for (const openedBefore of [false, true]) {
+    const disk = storage();
+    let store = createMatchStore(() => disk);
+    replace(store, match('A', catalog.slice(0, 4)));
+    play(store, { type: 'reveal' }, { type: 'score' });
+    if (openedBefore) play(store, { type: 'openTrack' });
+    assert.ok(store.clearRecentTracks(store.getSnapshot().match));
+    assert.equal(store.hasRecentTracks(), false);
+    assert.ok(store.clearRecentTracks(store.getSnapshot().match));
+    store = createMatchStore(() => disk);
+    play(store, { type: 'reveal' });
+    assert.equal(store.hasRecentTracks(), !openedBefore);
+    play(store, { type: 'score' });
+    assert.equal(store.hasRecentTracks(), !openedBefore);
+    const expected = openedBefore ? catalog : [...catalog.filter(t => t.url !== catalog[1].url), catalog[1]];
+    assert.deepEqual(store.createDeck(selection, undefined, keepOrder), expected);
+  }
+});
+
+test('uma aba desatualizada não limpa faixas registradas por outra aba', () => {
+  const disk = storage();
+  const first = createMatchStore(() => disk);
+  assert.equal(first.hasRecentTracks(), false);
+  assert.ok(first.clearRecentTracks(null));
+  replace(first, match('A', catalog.slice(0, 3)));
+  const second = createMatchStore(() => disk);
+  const stale = second.getSnapshot().match;
+  play(first, { type: 'openTrack' });
+  assert.equal(second.clearRecentTracks(stale), false);
+  assert.equal(second.hasRecentTracks(), true);
+  assert.equal(createMatchStore(() => disk).hasRecentTracks(), true);
+  assert.ok(second.clearRecentTracks(second.getSnapshot().match));
+  first.refresh();
+  assert.equal(first.hasRecentTracks(), false);
+});
+
+test('limpar após uma vitória por correção respeita a faixa que ficou suspensa', () => {
+  for (const revealed of [false, true]) {
+    const disk = storage();
+    let store = createMatchStore(() => disk);
+    const initial = match('A', catalog.slice(0, 4));
+    initial.game.goal = 2;
+    replace(store, initial);
+    play(store, { type: 'reveal' }, { type: 'score' });
+    if (revealed) play(store, { type: 'reveal' });
+    play(store, { type: 'correctLastRound', round: 1, title: true, origin: false });
+    assert.equal(store.getSnapshot().match.game.winner, 0);
+    assert.ok(store.clearRecentTracks(store.getSnapshot().match));
+    store = createMatchStore(() => disk);
+    assert.equal(store.getSnapshot().match.game.winner, 0);
+    play(store, { type: 'correctLastRound', round: 1, title: false, origin: false });
+    assert.equal(store.getSnapshot().match.game.phase, revealed ? 'reveal' : 'listen');
+    assert.equal(store.hasRecentTracks(), false);
+    if (!revealed) play(store, { type: 'reveal' });
+    assert.equal(store.hasRecentTracks(), !revealed);
+  }
+});
+
+test('com o armazenamento bloqueado, limpa em memória e grava somente as novas audições após a recuperação', () => {
+  const disk = storage();
+  let blocked = false;
+  const store = createMatchStore(() => {
+    if (blocked) throw Error('armazenamento bloqueado');
+    return disk;
+  });
+  replace(store, match('anterior', [catalog[6]]));
+  play(store, { type: 'reveal' }, { type: 'score' });
+  replace(store, match('A', catalog.slice(0, 4)));
+  play(store, { type: 'openTrack' });
+  blocked = true;
+  assert.ok(store.clearRecentTracks(store.getSnapshot().match));
+  assert.equal(store.hasRecentTracks(), false);
+  assert.equal(store.getSnapshot().issue, 'unavailable');
+  play(store, { type: 'reveal' }, { type: 'score' });
+  assert.equal(store.hasRecentTracks(), false);
+  blocked = false;
+  play(store, { type: 'openTrack' });
+  const reloaded = createMatchStore(() => disk);
+  assert.equal(reloaded.getSnapshot().issue, null);
+  assert.equal(reloaded.hasRecentTracks(), true);
+  assert.deepEqual(reloaded.createDeck(selection, undefined, keepOrder), [
+    ...catalog.filter(t => t.url !== catalog[1].url), catalog[1],
+  ]);
 });

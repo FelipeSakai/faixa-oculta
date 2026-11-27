@@ -1,6 +1,6 @@
 import { getLastRound, getRound, powers } from './game.js';
 import { shuffleTracks } from './catalog.js';
-import { includePlayedMatch, readRecentMatches, restoreTrackHistory } from './recent-tracks.js';
+import { clearTrackHistory, hasPlayedTracks, includePlayedMatch, readRecentMatches, restoreTrackHistory } from './recent-tracks.js';
 
 // Keep the original pointer so upgrades find the active game and stale tabs see changes.
 export const saveKey = 'faixa-oculta.partida.v1';
@@ -199,9 +199,21 @@ export function createMatchStore(storage = () => window.localStorage) {
     return true;
   }
 
+  function clearRecentTracks(expected) {
+    if (!expected) {
+      refresh();
+      return expected === snapshot.match;
+    }
+    const next = hasPlayedTracks(recentMatches, expected)
+      ? { ...expected, game: clearTrackHistory(expected.game) }
+      : expected;
+    return commit(expected, next);
+  }
+
   refresh();
   return {
-    commit, refresh,
+    commit, refresh, clearRecentTracks,
+    hasRecentTracks: () => hasPlayedTracks(recentMatches, snapshot.match),
     createDeck: (originIds, expected = snapshot.match, random = Math.random) =>
       shuffleTracks(random, originIds, includePlayedMatch(recentMatches, expected)),
     getSnapshot: () => snapshot,

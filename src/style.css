@@ -308,6 +308,29 @@ a { color: inherit; text-underline-offset: 0.25em; }
   letter-spacing: -0.04em;
   overflow-wrap: anywhere;
 }
+.playlist-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: 5px;
+}
+.clear-history {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 44px;
+  padding-inline: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--paper);
+  font-size: .8rem;
+}
+.clear-history:hover:enabled { background: var(--surface-hover); }
+.clear-history:disabled { color: var(--muted); }
+.clear-history[data-cleared="true"] { color: var(--paper); opacity: 1; }
+.clear-history[data-cleared="true"] svg { color: var(--flame-light); }
 .playlist-trigger {
   display: inline-flex;
   align-items: center;
@@ -318,7 +341,6 @@ a { color: inherit; text-underline-offset: 0.25em; }
   border-radius: 8px;
   background: var(--surface);
   color: var(--muted);
-  margin-top: 5px;
   font-size: .88rem;
 }
 .playlist-trigger strong { color: var(--paper); }
@@ -1128,6 +1150,12 @@ input::placeholder { color: #aa9e8a; }
   .team-add-short { display: inline; }
 }
 
+@media (max-width: 380px) {
+  .playlist-summary { display: grid; text-align: start; line-height: 1.2; }
+  .playlist-summary > span { font-size: .75rem; }
+  .playlist-divider { display: none; }
+}
+
 @media (max-width: 640px) and (max-height: 620px) {
   .game .player .player-visual { min-height: 68px; }
   .game .player .player-record { width: 59px; }
@@ -1135,7 +1163,7 @@ input::placeholder { color: #aa9e8a; }
   .setup .stage-shell {
     display: grid;
     grid-template-columns: 44px minmax(0, 1fr);
-    grid-template-areas: 'back intro' 'form form';
+    grid-template-areas: 'back intro' 'playlists playlists' 'form form';
     align-items: center;
     gap: 6px 10px;
     padding-block: 7px 4px;
@@ -1151,9 +1179,9 @@ input::placeholder { color: #aa9e8a; }
   }
   .setup .back-button span { display: none; }
   .setup-layout { display: contents; }
-  .setup-intro { grid-area: intro; }
-  .setup-intro .screen-title { font-size: clamp(1.38rem, 6vw, 1.8rem); }
-  .playlist-trigger { margin-top: 2px; }
+  .setup-intro { display: contents; }
+  .setup-intro .screen-title { grid-area: intro; font-size: clamp(1.38rem, 6vw, 1.8rem); }
+  .playlist-controls { grid-area: playlists; margin: 0; }
   .setup-form { grid-area: form; padding-block: 9px; }
   .team-inputs { max-block-size: 74px; }
   .goal-field { margin-block-end: 9px; }
@@ -1184,7 +1212,7 @@ input::placeholder { color: #aa9e8a; }
     grid-template-columns: minmax(0, .93fr) minmax(0, 1.07fr);
     gap: clamp(36px, 7vw, 110px);
   }
-  .playlist-trigger { margin: 15px 0 26px; }
+  .playlist-controls { margin: 15px 0 26px; }
   .setup-cover { display: block; }
   .setup-form { padding: clamp(20px, 3vw, 34px); }
   .team-inputs { max-block-size: 150px; }

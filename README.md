@@ -26,6 +26,8 @@ Em **Preparar partida**, toque no botão com a quantidade de playlists e escolha
 
 O sorteio usa apenas as playlists marcadas. As músicas que o DJ abriu ou revelou nas três últimas partidas jogadas neste navegador vão para o fim do baralho. Quando a seleção só tiver faixas recentes, aparecem primeiro as ouvidas há mais partidas. Uma faixa que estava oculta quando o DJ a pulou continua disponível entre as inéditas.
 
+Em **Preparar partida**, toque em **Limpar histórico** para que todas as músicas das playlists marcadas tenham a mesma chance no próximo sorteio. O placar, a rodada e a ordem das faixas da partida em andamento ficam salvos. As músicas abertas ou reveladas depois da limpeza passam a contar para o próximo histórico.
+
 O contador mostra as faixas únicas. Uma música compartilhada continua no sorteio quando alguma de suas listas está marcada.
 
 - **my mind**, de Felipe Sakai, tem 70 faixas famosas e 30 de estilos variados. Para a seleção de 26/11/2026, cruzamos as 175 posições documentadas da playlist com o ranking global de reproduções por música. As 70 escolhidas como famosas ultrapassavam 870 milhões de reproduções cada. As outras 30 trazem 30 artistas principais diferentes. Os dois grupos entram juntos no sorteio. [Playlist no Spotify](https://open.spotify.com/playlist/5tB8NlRXqnMo6pDehea3VW) · [Ranking de reproduções por música](https://kworb.net/spotify/songs.html)

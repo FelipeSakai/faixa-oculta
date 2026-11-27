@@ -19,18 +19,42 @@ export function restoreTrackHistory(game) {
   return hadPowerSkip || !validStart ? { unheardSkips: [], historyStartIndex: game.trackIndex } : { unheardSkips: [] };
 }
 
+function playedEnd(game) {
+  const phase = game.lastRound?.resumePhase ?? game.phase;
+  return game.trackIndex + (game.opened || phase !== 'listen' ? 1 : 0);
+}
+
+function clearedAt(game) {
+  const index = game?.historyClearedAt;
+  return Number.isSafeInteger(index) && index >= 0 && index <= game.trackIndex + 1 ? index : null;
+}
+
+export function clearTrackHistory(game) {
+  return { ...game, historyClearedAt: playedEnd(game), unheardSkips: [] };
+}
+
+function* playedUrls(game, cutoff) {
+  const end = playedEnd(game);
+  const restored = restoreTrackHistory(game);
+  const start = Math.max(cutoff ?? 0, restored.historyStartIndex ?? game.historyStartIndex ?? 0);
+  const skipped = new Set(restored.unheardSkips ?? game.unheardSkips);
+  for (let i = start; i < end; i++) {
+    if (!skipped.has(i)) yield game.deck[i].url;
+  }
+}
+
+export function hasPlayedTracks(previous, match) {
+  const cutoff = clearedAt(match?.game);
+  if (cutoff === null && previous.some(urls => urls.length)) return true;
+  return Boolean(match && !playedUrls(match.game, cutoff).next().done);
+}
+
 export function includePlayedMatch(previous, match) {
   if (!match) return previous;
-  const { game } = match;
-  const phase = game.lastRound?.resumePhase ?? game.phase;
-  const end = game.trackIndex + (game.opened || phase !== 'listen' ? 1 : 0);
-  const restored = restoreTrackHistory(game);
-  const start = restored.historyStartIndex ?? game.historyStartIndex ?? 0;
-  const skipped = new Set(restored.unheardSkips ?? game.unheardSkips);
-  const urls = new Set();
-  for (let i = start; i < end; i++) {
-    if (!skipped.has(i)) urls.add(game.deck[i].url);
-  }
+  const cutoff = clearedAt(match.game);
+  // The immutable deck may carry older match groups. A reset in its progress supersedes them.
+  if (cutoff !== null) previous = [];
+  const urls = new Set(playedUrls(match.game, cutoff));
   if (!urls.size) return previous;
   return [...previous, [...urls]].slice(-matchLimit);
 }

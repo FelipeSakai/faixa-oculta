@@ -15,10 +15,13 @@ export function PlaylistPicker({ selected, onApply }) {
   return (
     <>
       <button className="playlist-trigger" type="button" aria-haspopup="dialog" aria-controls="playlist-picker"
+        aria-label={selected.length + (selected.length === 1 ? ' playlist' : ' playlists') + ' · ' + total + ' faixas'}
         onClick={() => { setDraft(selected); dialog.current.showModal(); }}>
         <ListMusic size={18} aria-hidden="true" />
-        <strong>{selected.length} {selected.length === 1 ? 'playlist' : 'playlists'}</strong>
-        <span>· {total} faixas</span>
+        <span className="playlist-summary">
+          <strong>{selected.length} {selected.length === 1 ? 'playlist' : 'playlists'}</strong>
+          <span><span className="playlist-divider"> · </span>{total} faixas</span>
+        </span>
         <ChevronDown size={16} aria-hidden="true" />
       </button>
       <dialog id="playlist-picker" ref={dialog} className="rules-dialog playlist-dialog" aria-labelledby="playlists-title">
