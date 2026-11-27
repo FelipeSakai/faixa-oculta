@@ -320,9 +320,7 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
   const track = game.deck[game.trackIndex];
   const { url, label: trackLabel, accessibleLabel, Icon: TrackIcon } = getTrackAction(track, game.effect);
   const { team, turn, canSwap, canRetry, remainingSkips } = round;
-  const swapLabel = team.swapUsed ? 'Troca grátis usada' : 'Trocar faixa';
-  const skipCount = remainingSkips === 1 ? '1 pulo' : remainingSkips + ' pulos';
-  const skipBalance = team.powers.skipTrack > 0 ? skipCount + ' no total' : team.swapUsed ? skipCount : '1 pulo grátis';
+  const swapLabel = team.swapUsed ? 'Troca usada' : 'Trocar faixa';
   const target = players[(turn + 1) % players.length];
 
   useLayoutEffect(() => {
@@ -345,12 +343,13 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
       </div>
       <div className="player-controls">
         <div className="bonus-options" role="group" aria-label="Ações da rodada">
-          {!practice && <button className="bonus-button" onClick={() => {
+          {!practice && <button className="bonus-button swap-button" onClick={() => {
             dispatch({ type: 'swap' });
             trackLink.current?.focus({ preventScroll: true });
           }} disabled={!canSwap} aria-label={swapLabel} aria-describedby="saldo-pulos" title="Use a troca grátis depois de abrir a faixa e antes de revelar">
             <Shuffle size={16} aria-hidden="true" />
-            <span className="bonus-label">{swapLabel}<small id="saldo-pulos">{skipBalance}</small></span>
+            {swapLabel} <span aria-hidden="true">{remainingSkips}</span>
+            <span id="saldo-pulos" className="sr-only">{remainingSkips === 1 ? '1 pulo restante' : remainingSkips + ' pulos restantes'}</span>
           </button>}
           {game.powersEnabled ? <PowerUse key={game.round} game={game} turn={turn} players={players} onUse={action => {
             dispatch(action);
