@@ -938,7 +938,8 @@ input::placeholder { color: #aa9e8a; }
 .round-points[data-positive="true"] { color: #ffab95; background: var(--selected-surface); }
 .score-options {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   gap: 7px;
   margin-bottom: 9px;
 }
@@ -991,7 +992,6 @@ input::placeholder { color: #aa9e8a; }
 }
 .round-panel .button { min-height: 46px; padding-block: 8px; }
 .round-panel .button:disabled { transform: none; box-shadow: none; }
-.shared-origin { margin-block: 0 8px; color: var(--muted); font-size: .75rem; }
 .win-mark {
   display: grid;
   place-items: center;

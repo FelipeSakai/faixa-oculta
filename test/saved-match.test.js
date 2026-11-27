@@ -14,7 +14,8 @@ function memoryStorage() {
 }
 
 function newMatch(players = ['Azul', 'Verde', 'Sol'], goal = 30) {
-  return { id: 'teste', players, game: startGame({ players, goal, powersEnabled: true }) };
+  const game = startGame({ players, goal, powersEnabled: true }, tracksForOrigins(['my-mind']));
+  return { id: 'teste', players, game };
 }
 
 function matchWithPowers() {

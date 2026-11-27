@@ -10,7 +10,7 @@ import '@fontsource/archivo-black/latin-400.css';
 import '@fontsource/ibm-plex-mono/latin-500.css';
 import { BlurReveal } from './BlurReveal.jsx';
 import { Scoreboard } from './Scoreboard.jsx';
-import { orderedOriginIds, originLabels } from './catalog.js';
+import { originPeople, personalOriginIds } from './catalog.js';
 import { playlistPreferenceKey, previousPlaylistSelection, readPlaylistPreference, writePlaylistPreference } from './playlist-preference.js';
 import { PlaylistPicker } from './PlaylistPicker.jsx';
 import PowerPractice from './PowerPractice.jsx';
@@ -22,7 +22,7 @@ import './style.css';
 
 const goalPresets = [15, 30, 50, 100];
 const maxGoal = Number.MAX_SAFE_INTEGER - 6;
-const formatOrigins = new Intl.ListFormat('pt-BR');
+const peopleList = new Intl.ListFormat('pt-BR', { type: 'disjunction' });
 const waveHeights = [12, 24, 16, 36, 45, 21, 30, 49, 26, 17, 37, 52, 31, 18, 38, 23, 44, 53, 26, 14, 30, 42, 26, 48, 34, 19, 31, 16, 23, 12];
 const scoringDelay = 760;
 const practiceHash = '#teste-poderes';
@@ -59,8 +59,8 @@ function Brand({ home, onClick }) {
 function Rules({ dialogRef, deck }) {
   const choices = useMemo(() => {
     if (!deck) return '';
-    const origins = orderedOriginIds(deck.flatMap(track => track.origins));
-    return formatOrigins.format(origins.map(id => Object.hasOwn(originLabels, id) ? originLabels[id] : id));
+    const ids = personalOriginIds(deck.flatMap(track => track.origins));
+    return peopleList.format(ids.map(id => originPeople[id]));
   }, [deck]);
   return (
     <dialog
@@ -78,8 +78,8 @@ function Rules({ dialogRef, deck }) {
         </div>
         <ol className="rules-list">
           <li><strong>O DJ toca a faixa no Spotify.</strong><span>Só o DJ vê a faixa.</span></li>
-          <li><strong>Palpite em voz alta.</strong><span>Diga o título e de qual playlist ou pessoa veio a faixa. {choices ? 'As opções são ' + choices + '.' : 'Escolha as playlists ao preparar a partida.'}</span></li>
-          <li><strong>Revele e marque os pontos.</strong><span>Música +2. Origem +1. Quem bate a meta vence.</span></li>
+          <li><strong>Palpite em voz alta.</strong><span>Diga o título. Se reconhecer uma playlist pessoal, você também pode dizer de quem é.{choices && ' Nesta partida, vale tentar ' + choices + '.'}</span></li>
+          <li><strong>Revele e marque os pontos.</strong><span>O título vale 2 pontos. Acertar de quem é a playlist vale mais 1, mesmo se errar o título. Quem bate a meta vence.</span></li>
           <li><strong>Uma troca por equipe.</strong><span>Depois de abrir a faixa, você pode trocá-la uma vez por partida.</span></li>
           <li><strong>Ganhe um poder surpresa.</strong><span>Marque o acerto do título em até 3 s e toque em Sortear poder. Leia o que a equipe ganhou e toque em Próxima rodada.</span></li>
           <li><strong>Escolha qual poder usar.</strong><span>Toque em Usar poder, escolha a equipe e o poder que ela vai gastar. Para atacar uma rival, use antes de abrir a pista. Cabe um ataque por rodada.</span></li>
@@ -107,7 +107,7 @@ function Home({ match, onResume, onStart, direction }) {
       <section className="hero shell" aria-labelledby="hero-title">
         <div className="hero-copy">
           <BlurReveal id="hero-title" className="hero-title" lines={['Qual é a', 'faixa?']} />
-          <p>{progress || 'Adivinhe a música e de onde ela veio.'}</p>
+          <p>{progress || 'Ouça no Spotify e adivinhe a música.'}</p>
           <div className="home-actions">
             <button ref={primaryAction} className="button button-primary hero-cta" onClick={match ? onResume : onStart}>
               <Play size={19} fill="currentColor" />
@@ -392,10 +392,10 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
   );
 }
 
-function MarkChoice({ title, points, checked, disabled, onChange }) {
+function MarkChoice({ title, label = title, points, checked, disabled, onChange }) {
   return (
     <label className="mark-choice">
-      <input type="checkbox" aria-label={'Acertou a ' + title.toLowerCase()} checked={checked} disabled={disabled} onChange={event => onChange(event.target.checked)} />
+      <input type="checkbox" aria-label={label} checked={checked} disabled={disabled} onChange={event => onChange(event.target.checked)} />
       <span className="mark-icon" aria-hidden="true"><Check size={13} strokeWidth={3} /></span>
       <span>{title}</span>
       <strong>+{points}</strong>
@@ -425,9 +425,10 @@ function Game({ match, dispatch, onBack, onSetup, direction }) {
   const { round, deck, trackIndex, phase, marks, winner, award } = game;
   const track = deck[trackIndex];
   const roundOptions = getRound(game);
-  const { turn, points, titlePoints, originPoints, endsAfterRound, canEarnPower } = roundOptions;
+  const { turn, titlePoints, originPoints, personalOrigins, endsAfterRound, canEarnPower } = roundOptions;
   const scores = game.teams.map(team => team.score);
   const awarding = phase === 'award';
+  const points = awarding ? award.points : roundOptions.points;
   const rewardPower = awarding && award.power;
 
   // A match saved by the previous version can still have a reward pending.
@@ -471,9 +472,12 @@ function Game({ match, dispatch, onBack, onSetup, direction }) {
                 <div>
                   <h2 ref={phaseHeading} id="answer-title" tabIndex={-1}>{track.title}</h2>
                   <span className="answer-artist" title={track.artist}>{track.artist}</span>
-                  {orderedOriginIds(track.origins).map(id => (
-                    <span key={id} className="answer-origin">{Object.hasOwn(originLabels, id) ? originLabels[id] : id}</span>
-                  ))}
+                  {personalOrigins.length > 0 && (
+                    <span className="answer-origin">
+                      {personalOrigins.length === 1 ? 'Playlist de ' : 'Para o bônus, vale '}
+                      {peopleList.format(personalOrigins.map(id => originPeople[id]))}
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="marks-heading">
@@ -487,19 +491,20 @@ function Game({ match, dispatch, onBack, onSetup, direction }) {
                 </span>
               </div>
               <div className="score-options">
-                <MarkChoice title="Música" points={titlePoints} checked={marks.title} disabled={awarding} onChange={checked => dispatch({ type: 'mark', mark: 'title', checked })} />
-                <MarkChoice title="Origem" points={originPoints} checked={marks.origin} disabled={awarding} onChange={checked => dispatch({ type: 'mark', mark: 'origin', checked })} />
+                <MarkChoice title="Música" label="Acertou a música" points={titlePoints} checked={marks.title} disabled={awarding} onChange={checked => dispatch({ type: 'mark', mark: 'title', checked })} />
+                {originPoints > 0 && (
+                  <MarkChoice title="Acertou de quem é?" points={originPoints} checked={marks.origin} disabled={awarding} onChange={checked => dispatch({ type: 'mark', mark: 'origin', checked })} />
+                )}
               </div>
-              {canEarnPower && (!endsAfterRound || awarding) && (
+              {canEarnPower && marks.title && (!endsAfterRound || awarding) && (
                 <label className="mark-choice fast-guess">
-                  <input type="checkbox" checked={marks.fast} disabled={awarding || !marks.title} aria-label="Acertou com até 3 segundos de áudio"
+                  <input type="checkbox" checked={marks.fast} disabled={awarding} aria-label="Acertou com até 3 segundos de áudio"
                     onChange={event => dispatch({ type: 'mark', mark: 'fast', checked: event.target.checked })} />
                   <span className="mark-icon" aria-hidden="true"><Check size={13} strokeWidth={3} /></span>
                   <span><Timer size={15} aria-hidden="true" /> Até 3 s de áudio</span>
                   <strong>{award?.power ? powers[award.power].name : 'Poder'}</strong>
                 </label>
               )}
-              {track.origins.length > 1 && <p className="shared-origin">Vale qualquer uma das origens acima.</p>}
               <button className="button button-primary full-width" disabled={awarding} onClick={() => dispatch({
                 type: 'score',
                 draw: Math.random(),

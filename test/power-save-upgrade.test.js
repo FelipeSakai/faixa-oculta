@@ -38,11 +38,12 @@ for (const version of [1, 2]) {
     const game = legacyGame();
     delete game.powerSkipped;
     for (const team of game.teams) delete team.powers.skipTrack;
-    game.teams[0].score = 2;
+    // A previous release credited one origin point even on a general playlist.
+    game.teams[0].score = 3;
     game.teams[1].powers.secondGuess = 1;
     game.phase = 'choosePower';
-    game.marks = { title: true, origin: false, fast: true };
-    game.award = { team: 0, points: 2, power: null };
+    game.marks = { title: true, origin: true, fast: true };
+    game.award = { team: 0, points: 3, power: null };
     const disk = storageWith(game, version);
     const store = createMatchStore(() => disk);
     const pending = store.getSnapshot().match;
@@ -53,7 +54,8 @@ for (const version of [1, 2]) {
 
     const awarded = gameReducer(pending.game, { type: 'drawReward', draw: 0.8, skipAnimation: true });
     assert.equal(awarded.phase, 'award');
-    assert.equal(awarded.teams[0].score, 2);
+    assert.equal(awarded.teams[0].score, 3);
+    assert.equal(awarded.award.points, 3);
     assert.equal(awarded.award.power, 'skipTrack');
     assert.equal(awarded.teams[0].powers.skipTrack, 1);
     assert.equal(awarded.teams[1].powers.secondGuess, 1);
@@ -89,7 +91,7 @@ for (const version of [1, 2]) {
       { type: 'mark', mark: 'origin', checked: true },
       { type: 'score', skipAnimation: true },
     ].reduce(gameReducer, game);
-    assert.deepEqual(next.teams.map(t => t.score), [3, 10]);
+    assert.deepEqual(next.teams.map(t => t.score), [3, 8]);
     assert.equal(next.round, 3);
     assert.equal(next.doubled, false);
     assert.ok(store.commit(match, { ...match, game: next }));
@@ -106,6 +108,38 @@ for (const version of [1, 2]) {
     assert.deepEqual(createMatchStore(() => disk).getSnapshot().match.game, spent);
   });
 }
+
+test('retoma uma recompensa antiga de seis pontos dobrados em uma faixa geral já pontuada', () => {
+  const game = start();
+  game.phase = 'award';
+  game.doubled = true;
+  game.marks = { title: true, origin: true, fast: true };
+  game.teams[0].score = 6;
+  game.teams[0].powers.secondGuess = 1;
+  game.award = { team: 0, points: 6, power: 'secondGuess' };
+  const disk = storageWith(game, 1);
+  const store = createMatchStore(() => disk);
+  const restored = store.getSnapshot().match.game;
+  assert.equal(restored.teams[0].score, 6);
+  assert.deepEqual(restored.award, game.award);
+  const next = gameReducer(restored, { type: 'advance' });
+  assert.equal(next.round, 2);
+  assert.equal(next.teams[0].score, 6);
+  assert.equal(next.teams[0].powers.secondGuess, 1);
+});
+
+test('uma origem geral marcada antes de confirmar a rodada sai da pontuação ao retomar', () => {
+  const game = start();
+  game.phase = 'reveal';
+  game.teams[0].score = 5;
+  game.marks = { title: true, origin: true, fast: false };
+  const disk = storageWith(game, 2);
+  const restored = createMatchStore(() => disk).getSnapshot().match.game;
+  assert.deepEqual(restored.marks, { title: true, origin: false, fast: false });
+  assert.equal(restored.teams[0].score, 5);
+  const next = gameReducer(restored, { type: 'score', skipAnimation: true });
+  assert.equal(next.teams[0].score, 7);
+});
 
 test('estoque de dobro salvo tem precedência e campos ausentes ou inválidos são rejeitados', () => {
   const mixed = legacyGame();

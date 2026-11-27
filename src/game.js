@@ -1,4 +1,4 @@
-import { shuffleTracks } from './catalog.js';
+import { personalOriginIds, shuffleTracks } from './catalog.js';
 
 export const powers = {
   tenSeconds: {
@@ -38,7 +38,7 @@ export const powers = {
   doublePoints: {
     name: 'Vale o dobro',
     opponent: false,
-    description: 'Antes de abrir a faixa, dobre os pontos da música e da origem nesta rodada.',
+    description: 'Antes de abrir a faixa, dobre os pontos da música e o bônus de playlist pessoal, quando houver.',
   },
 };
 
@@ -113,7 +113,8 @@ export function getRound(game) {
   const lastTrack = game.trackIndex === game.deck.length - 1;
   const listening = game.phase === 'listen';
   const titlePoints = game.doubled ? 4 : 2;
-  const originPoints = game.doubled ? 2 : 1;
+  const personalOrigins = personalOriginIds(game.deck[game.trackIndex].origins);
+  const originPoints = personalOrigins.length ? titlePoints / 2 : 0;
   const points = (game.marks.title ? titlePoints : 0) + (game.marks.origin ? originPoints : 0);
 
   return {
@@ -121,6 +122,7 @@ export function getRound(game) {
     team,
     lastTrack,
     titlePoints,
+    personalOrigins,
     originPoints,
     points,
     endsAfterRound: team.score + points >= game.goal || lastTrack,
@@ -159,7 +161,7 @@ function advance(game) {
 }
 
 export function gameReducer(game, action) {
-  const { turn, team, canSwap, canRetry, canEarnPower, endsAfterRound, points } = getRound(game);
+  const { turn, team, canSwap, canRetry, canEarnPower, endsAfterRound, points, originPoints } = getRound(game);
 
   switch (action.type) {
     case 'enablePowers':
@@ -198,6 +200,7 @@ export function gameReducer(game, action) {
     case 'mark': {
       const { mark, checked } = action;
       if (game.phase !== 'reveal') return game;
+      if (mark === 'origin' && !originPoints) return game;
       if (mark === 'fast' && (!canEarnPower || !game.marks.title)) return game;
       return {
         ...game,

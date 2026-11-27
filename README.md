@@ -1,6 +1,6 @@
 # Faixa Oculta
 
-Jogo musical em Modo Misto, solo ou por equipes. O baralho reúne seleções fixas e é embaralhado a cada partida. Os palpites são dados em voz alta. Depois de revelar a resposta, quem conduz marca os acertos de título e de origem antes de passar à próxima rodada.
+Jogo musical em Modo Misto, solo ou por equipes. O baralho reúne seleções fixas e é embaralhado a cada partida. Os palpites são dados em voz alta. Depois da revelação, o DJ marca 2 pontos pelo título e, quando a faixa está em uma playlist pessoal selecionada, pode marcar 1 ponto por acertar de quem é.
 
 Em **Equipes**, adicione quantas equipes precisar e dê um nome a cada uma, se quiser. A vez segue a ordem da configuração e o placar acompanha a equipe ativa. A primeira a alcançar a meta vence.
 
@@ -16,7 +16,7 @@ Durante a escuta, **Usar poder** abre os poderes guardados pelas equipes e indic
 - **Sem vocal** mostra o botão **Buscar instrumental** para o DJ escolher uma versão instrumental ou de karaokê.
 - **Duas tentativas** é um poder da própria equipe. Ela pode ativá-lo antes de revelar, inclusive quando recebeu um ataque. O botão **2º palpite** libera a nova tentativa. Esse poder também funciona no solo.
 - **Pular música** troca a faixa por outra na vez da própria equipe, antes da revelação e enquanto houver outra faixa no baralho. A equipe mantém o turno, o placar e o bônus de troca por partida.
-- **Vale o dobro** pode ser usado na vez da própria equipe, antes de abrir a faixa. O título passa a valer 4 pontos e a origem, 2. Cada equipe pode usar um poder próprio por rodada. Nas partidas salvas antes desta mudança, o dobro que a equipe ainda tinha fica guardado em **Usar poder**.
+- **Vale o dobro** pode ser usado na vez da própria equipe, antes de abrir a faixa. O título passa a valer 4 pontos. Se houver bônus de playlist pessoal, ele vale 2. Cada equipe pode usar um poder próprio por rodada. Nas partidas salvas antes desta mudança, o dobro que a equipe ainda tinha fica guardado em **Usar poder**.
 
 O treino pode ser aberto pelo endereço do jogo com `#teste-poderes` no final. Ele começa na vez da Equipe 2, com poderes guardados para experimentar um ataque da Equipe 4.
 
@@ -24,7 +24,7 @@ O treino pode ser aberto pelo endereço do jogo com `#teste-poderes` no final. E
 
 Em **Preparar partida**, toque no botão com a quantidade de playlists e escolha pelo menos uma. **Aplicar seleção** lembra as listas neste navegador, inclusive depois de fechar a aba. Você pode mudar a escolha antes de cada partida. No primeiro uso, todas aparecem marcadas. Se já houver uma partida de uma versão anterior, a configuração começa com as playlists daquela partida.
 
-O contador mostra as faixas únicas. Uma música compartilhada continua no sorteio quando alguma de suas listas está marcada, e a revelação aceita apenas as origens escolhidas para aquela partida.
+O contador mostra as faixas únicas. Uma música compartilhada continua no sorteio quando alguma de suas listas está marcada.
 
 - **my mind**, de Felipe Sakai, tem 70 faixas famosas e 30 de estilos variados. Para a seleção de 26/11/2026, cruzamos as 175 posições documentadas da playlist com o ranking global de reproduções por música. As 70 escolhidas como famosas ultrapassavam 870 milhões de reproduções cada. As outras 30 trazem 30 artistas principais diferentes. Os dois grupos entram juntos no sorteio. [Playlist no Spotify](https://open.spotify.com/playlist/5tB8NlRXqnMo6pDehea3VW) · [Ranking de reproduções por música](https://kworb.net/spotify/songs.html)
 - **Hits Brasil** reúne as posições 1 a 100 e 25 faixas extras selecionadas entre as posições 101 e 142 da parada diária do Spotify Brasil de 24/11/2026. Os dados estão nos dois arquivos com prefixo `top-brasil` em `src/data`. [Parada diária do Spotify Brasil no Kworb](https://kworb.net/spotify/country/br_daily.html)
@@ -39,7 +39,7 @@ O contador mostra as faixas únicas. Uma música compartilhada continua no sorte
 
 Cada faixa usa um link individual. Abra a faixa no Spotify, dê play e volte para o jogo. O Spotify pode mostrar o título ao abrir o link.
 
-Para o ponto de origem, o DJ pode aceitar o nome da lista ou da pessoa associada a ela. Quando o mesmo link aparece em mais de uma seleção, a faixa sai uma vez no baralho. A revelação mostra cada origem em uma linha e qualquer uma vale o ponto.
+Em rodadas só de **Hits Brasil**, **Clássicos BR** ou **Clássicos Internacionais**, o DJ marca apenas o acerto da música. Se a faixa também estiver em uma playlist pessoal escolhida para a partida, a revelação mostra **Acertou de quem é?**. Quando aparecem duas ou mais pessoas, qualquer um dos nomes vale o bônus, mesmo se a equipe errar o título.
 
 ## Rodar localmente
 

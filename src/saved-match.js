@@ -53,7 +53,7 @@ function validProgress(match) {
       ![g.marks.title, g.marks.origin, g.marks.fast].every(flag) ||
       !attack(g.effect) || !attack(g.nextEffect ?? null) || ![null, 'ready', 'used'].includes(g.retry)) return false;
   const teamIndex = i => inRange(i, g.teams.length);
-  const { turn } = getRound(g);
+  const { turn, team, points, originPoints, lastTrack, canEarnPower } = getRound(g);
   if ((g.effect || g.nextEffect) && (!g.powersEnabled || g.teams.length < 2)) return false;
   if (g.effect) {
     // In older games only the previous team could have set the active effect.
@@ -62,9 +62,10 @@ function validProgress(match) {
   if (g.notice !== null && !(g.notice && teamIndex(g.notice.team) && hasPower(g.notice.power))) return false;
   if (g.winner !== null && !(g.phase === 'finished' && teamIndex(g.winner))) return false;
   if (g.phase === 'choosePower') {
-    const { team, points, lastTrack, canEarnPower } = getRound(g);
+    // This legacy phase was saved after crediting origin points, including on general playlists.
+    const credited = !originPoints && g.marks.origin ? points + (g.doubled ? 2 : 1) : points;
     return canEarnPower && g.marks.title && g.marks.fast && !lastTrack && team.score < g.goal &&
-      team.score >= points && g.award?.team === turn && g.award.points === points && g.award.power === null;
+      team.score >= credited && g.award?.team === turn && g.award.points === credited && g.award.power === null;
   }
   if (g.phase === 'award' || g.phase === 'finished') {
     return g.award && teamIndex(g.award.team) && count(g.award.points) &&
@@ -131,8 +132,10 @@ export function createMatchStore(storage = () => window.localStorage) {
     if (match && validProgress(match)) {
       const game = match.game;
       const previousTeam = (game.round - 2 + game.teams.length) % game.teams.length;
+      const clearOrigin = !game.award && game.marks.origin && !getRound(game).originPoints;
       match = { ...match, game: {
         ...game, teams: game.teams.map(restoreTeam),
+        marks: clearOrigin ? { ...game.marks, origin: false } : game.marks,
         powerSkipped: game.powerSkipped ?? false,
         effectSource: game.effect ? (game.effectSource ?? previousTeam) : null,
         nextEffect: game.nextEffect ?? null,

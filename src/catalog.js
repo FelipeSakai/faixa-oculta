@@ -26,16 +26,17 @@ const collections = [
 export const originLabels = Object.fromEntries(collections.map(({ id, label, person, displayLabel }) =>
   [id, displayLabel ?? (person ? label + ' · ' + person : label)]
 ));
+export const originPeople = Object.fromEntries(
+  collections.filter(collection => collection.person).map(({ id, person }) => [id, person])
+);
+const personalIds = Object.keys(originPeople);
 export const allOriginIds = [
-  ...collections.filter(collection => collection.person),
-  ...collections.filter(collection => !collection.person),
-].map(collection => collection.id);
+  ...personalIds,
+  ...collections.filter(collection => !collection.person).map(collection => collection.id),
+];
 
-export function orderedOriginIds(ids) {
-  const used = new Set(ids);
-  const known = allOriginIds.filter(id => used.has(id));
-  const unknown = [...used].filter(id => !Object.hasOwn(originLabels, id));
-  return known.concat(unknown);
+export function personalOriginIds(ids) {
+  return personalIds.filter(id => ids.includes(id));
 }
 
 const tracksByUrl = new Map();

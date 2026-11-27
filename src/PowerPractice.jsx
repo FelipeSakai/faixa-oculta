@@ -62,7 +62,7 @@ function practiceReducer(game, action) {
 }
 
 function practiceHint(game, turn) {
-  if (game.doubled) return game.opened ? 'Teste concluído. O título vale 4 pontos e a origem vale 2.' : 'Simule a faixa com os pontos em dobro.';
+  if (game.doubled) return game.opened ? 'Teste concluído. O título vale 4 pontos nesta rodada.' : 'Simule a faixa com os pontos em dobro.';
   if (game.retry === 'used') return 'Teste concluído. Os dois palpites valem na mesma rodada.';
   if (game.retry === 'ready') return game.opened ? 'Simule um erro e peça o segundo palpite.' : 'Simule a faixa para tentar o primeiro palpite.';
   if (game.effect) return game.opened ? 'Teste concluído. O ataque valeu nesta rodada.' : 'Simule a faixa com a regra indicada para o DJ.';
