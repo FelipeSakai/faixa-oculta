@@ -38,18 +38,20 @@ test('uma partida retomada ou abandonada conta apenas as faixas abertas ou revel
   disk.setItem = (key, value) => { writes.push(key); write(key, value); };
   let store = createMatchStore(() => disk);
   const first = match('A', catalog.slice(0, 8));
-  for (const team of first.game.teams) team.powers.skipTrack = 1;
+  first.game.teams[0].powers.skipTrack = 2;
+  first.game.teams[1].powers.skipTrack = 1;
   replace(store, first);
   const setupKey = writes.find(key => key.includes('baralho'));
   const fixed = disk.getItem(setupKey);
   play(store,
-    { type: 'usePower', sourceTeam: 0, targetTeam: 0, power: 'skipTrack' }, // Index 0 stayed hidden.
-    { type: 'openTrack' }, { type: 'swap' },                               // Index 1 was opened.
-    { type: 'reveal' }, { type: 'score' },                                  // Index 2 was revealed.
+    { type: 'swap' },                         // Paid skip, index 0 stayed hidden.
+    { type: 'openTrack' }, { type: 'swap' },   // Free swap, index 1 was opened.
+    { type: 'swap' },                         // Paid skip, index 2 stayed hidden.
+    { type: 'reveal' }, { type: 'score' },     // Index 3 was revealed.
     { type: 'openTrack' }, { type: 'usePower', sourceTeam: 1, targetTeam: 1, power: 'skipTrack' }
   );
-  const heard = urls(catalog.slice(1, 4));
-  assert.equal(store.getSnapshot().match.game.trackIndex, 4);
+  const heard = urls([catalog[1], catalog[3], catalog[4]]);
+  assert.equal(store.getSnapshot().match.game.trackIndex, 5);
   assert.equal(disk.getItem(setupKey), fixed);
   assert.ok(writes.slice(3).every(key => key.includes('progresso')));
   store = createMatchStore(() => disk);

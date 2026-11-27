@@ -269,7 +269,7 @@ test('Vale o dobro só pode ser ativado antes da faixa e ocupa o poder próprio 
   const doubled = gameReducer(game, use);
   assert.equal(doubled.teams[0].powers.doublePoints, 1);
   assert.equal(doubled.doubled, true);
-  for (const power of ['doublePoints', 'secondGuess', 'skipTrack']) {
+  for (const power of ['doublePoints', 'secondGuess']) {
     assert.equal(powerBlockReason(doubled, 0, power), 'ownPowerUsed');
     assert.equal(gameReducer(doubled, { ...use, power }), doubled);
     const usedFirst = gameReducer(game, { ...use, power });
@@ -379,8 +379,7 @@ test('pular faixa preserva a vez, o ataque e a troca grátis em qualquer ordem',
     assert.deepEqual(skipped.deck, before.deck);
     store = createMatchStore(() => storage);
     assert.deepEqual(store.getSnapshot().match.game, skipped);
-    assert.deepEqual(usablePowerIds(skipped, 0), []);
-    assert.equal(gameReducer(skipped, { type: 'usePower', ...skip }), skipped);
+    assert.deepEqual(usablePowerIds(skipped, 0), ['secondGuess', 'skipTrack', 'doublePoints']);
     if (!freeSwapFirst) {
       play(store, 'openTrack');
       const swapped = play(store, 'swap');
@@ -388,10 +387,135 @@ test('pular faixa preserva a vez, o ataque e a troca grátis em qualquer ordem',
       assert.equal(swapped.powerSkipped, true);
       assert.equal(swapped.teams[0].powers.skipTrack, 1);
     }
+    const again = play(store, 'usePower', skip);
+    assert.equal(again.teams[0].powers.skipTrack, 0);
+    assert.equal(again.teams[0].swapUsed, true);
+    assert.equal(gameReducer(again, { type: 'usePower', ...skip }), again);
     play(store, 'reveal');
     const next = play(store, 'score');
     assert.equal(next.powerSkipped, false);
     assert.equal(next.round, 2);
+  }
+});
+
+test('Trocar faixa gasta a grátis primeiro com a faixa aberta e depois os dois pulos da equipe', () => {
+  const disk = memoryStorage();
+  let store = createMatchStore(() => disk);
+  const match = newMatch(['Azul', 'Verde']);
+  const personal = tracksForOrigins(['my-mind']);
+  const general = tracksForOrigins(['classicos-br']);
+  match.game.deck = [personal[0], general[0], personal[1], general[1], personal[2], general[2]];
+  match.game.teams[0].powers.skipTrack = 2;
+  match.game.teams[1].powers.skipTrack = 1;
+  store.commit(null, match);
+
+  const opened = play(store, 'openTrack');
+  assert.equal(getRound(opened).remainingSkips, 3);
+  assert.equal(getRound(opened).canSwap, true);
+  const free = play(store, 'swap');
+  assert.equal(free.teams[0].swapUsed, true);
+  assert.equal(free.teams[0].powers.skipTrack, 2);
+  assert.equal(getRound(free).remainingSkips, 2);
+  assert.equal(getRound(free).originPoints, 0);
+  assert.equal(free.opened, false);
+  assert.equal(getRound(free).canSwap, true);
+  const hidden = play(store, 'swap');
+  assert.deepEqual(hidden.unheardSkips, [1]);
+  assert.equal(getRound(hidden).remainingSkips, 1);
+  assert.equal(getRound(hidden).originPoints, 1);
+
+  store = createMatchStore(() => disk);
+  assert.deepEqual(store.getSnapshot().match.game, hidden);
+  play(store, 'openTrack');
+  const paid = play(store, 'swap');
+  assert.equal(paid.trackIndex, 3);
+  assert.equal(paid.round, 1);
+  assert.equal(paid.opened, false);
+  assert.equal(getRound(paid).originPoints, 0);
+  assert.deepEqual(paid.unheardSkips, [1]);
+  assert.equal(getRound(paid).remainingSkips, 0);
+  assert.equal(getRound(paid).canSwap, false);
+  assert.equal(gameReducer(paid, { type: 'swap' }), paid);
+  const noStock = play(store, 'openTrack');
+  assert.equal(gameReducer(noStock, { type: 'swap' }), noStock);
+  assert.deepEqual(paid.teams[1], match.game.teams[1]);
+  play(store, 'reveal');
+  const next = play(store, 'score');
+  assert.equal(getRound(next).turn, 1);
+  assert.equal(getRound(next).remainingSkips, 2);
+  const other = play(store, 'swap');
+  assert.equal(other.teams[1].powers.skipTrack, 0);
+  assert.equal(other.teams[1].swapUsed, false);
+  assert.deepEqual(other.teams[0], paid.teams[0]);
+  assert.deepEqual(createMatchStore(() => disk).getSnapshot().match.game, other);
+});
+
+test('escolher Pular música explicitamente gasta só o poder mesmo com a troca grátis liberada', () => {
+  const { game } = newMatch();
+  game.teams[0].powers.skipTrack = 1;
+  const opened = gameReducer(game, { type: 'openTrack' });
+  const skip = { type: 'usePower', power: 'skipTrack', sourceTeam: 0, targetTeam: 0 };
+  assert.equal(getRound(opened).canSwap, true);
+  const paid = gameReducer(opened, skip);
+  assert.equal(paid.teams[0].swapUsed, false);
+  assert.equal(paid.teams[0].powers.skipTrack, 0);
+  assert.deepEqual(paid.unheardSkips, []);
+  assert.equal(gameReducer(paid, skip), paid);
+  assert.equal(getRound(paid).canSwap, false);
+  const reopened = gameReducer(paid, { type: 'openTrack' });
+  assert.equal(getRound(reopened).canSwap, true);
+  assert.equal(gameReducer(reopened, skip), reopened);
+  assert.equal(getRound(gameReducer(reopened, { type: 'swap' })).remainingSkips, 0);
+});
+
+test('pulos pagos coexistem com dobro ou duas tentativas, antes e depois de ativar o poder', () => {
+  for (const power of ['doublePoints', 'secondGuess']) {
+    for (const skipFirst of [true, false]) {
+      const disk = memoryStorage();
+      const store = createMatchStore(() => disk);
+      const match = matchWithPowers();
+      store.commit(null, match);
+      const own = { power, sourceTeam: 0, targetTeam: 0 };
+      if (skipFirst) play(store, 'swap');
+      const activated = play(store, 'usePower', own);
+      assert.equal(activated.teams[0].powers[power], 1);
+      const skipped = play(store, 'swap');
+      assert.equal(skipped.trackIndex, skipFirst ? 2 : 1);
+      assert.equal(skipped.teams[0].powers.skipTrack, skipFirst ? 0 : 1);
+      assert.equal(skipped.teams[0].swapUsed, false);
+      assert.equal(skipped.doubled, power === 'doublePoints');
+      assert.equal(skipped.retry, power === 'secondGuess' ? 'ready' : null);
+      assert.equal(gameReducer(skipped, { type: 'usePower', ...own }), skipped);
+      assert.deepEqual(createMatchStore(() => disk).getSnapshot().match.game, skipped);
+      if (power === 'doublePoints') {
+        play(store, 'reveal');
+        assert.equal(getRound(play(store, 'mark', { mark: 'title', checked: true })).points, 4);
+      } else {
+        play(store, 'openTrack');
+        assert.equal(play(store, 'retry').retry, 'used');
+        if (!skipFirst) {
+          const paid = play(store, 'usePower', { ...own, power: 'skipTrack' });
+          assert.equal(paid.teams[0].powers.skipTrack, 0);
+          assert.equal(paid.teams[0].swapUsed, false);
+          assert.equal(paid.retry, 'ready');
+          assert.equal(getRound(play(store, 'openTrack')).canRetry, true);
+        }
+      }
+    }
+  }
+});
+
+test('nenhum pulo avança a última faixa ou funciona depois de revelar', () => {
+  const { game } = matchWithPowers();
+  for (const opened of [false, true]) {
+    const current = { ...game, opened };
+    const blocked = ['reveal', 'choosePower', 'award', 'finished'].map(phase => ({ ...current, phase }));
+    blocked.push({ ...current, trackIndex: game.deck.length - 1 });
+    for (const state of blocked) {
+      assert.equal(getRound(state).canSwap, false);
+      assert.equal(gameReducer(state, { type: 'swap' }), state);
+      assert.equal(gameReducer(state, { type: 'usePower', power: 'skipTrack', sourceTeam: 0, targetTeam: 0 }), state);
+    }
   }
 });
 

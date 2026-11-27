@@ -8,7 +8,7 @@ const blockedDetails = {
   opponentTurn: 'Só na vez de uma equipe rival.',
   alreadyAttacked: 'A equipe da vez já recebeu um ataque.',
   trackOpened: 'Use antes de o DJ abrir a faixa.',
-  ownPowerUsed: 'A equipe já usou um poder próprio nesta rodada.',
+  ownPowerUsed: 'A equipe já usou Vale o dobro ou Duas tentativas nesta rodada.',
   lastTrack: 'Esta é a última faixa da partida.',
 };
 

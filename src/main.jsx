@@ -80,10 +80,10 @@ function Rules({ dialogRef, deck }) {
           <li><strong>O DJ toca a faixa no Spotify.</strong><span>Só o DJ vê a faixa.</span></li>
           <li><strong>Palpite em voz alta.</strong><span>Diga o título. Se reconhecer uma playlist pessoal, você também pode dizer de quem é.{choices && ' Nesta partida, vale tentar ' + choices + '.'}</span></li>
           <li><strong>Revele e marque os pontos.</strong><span>O título vale 2 pontos. Acertar de quem é a playlist vale mais 1, mesmo se errar o título. Quem bate a meta vence.</span></li>
-          <li><strong>Uma troca grátis por equipe.</strong><span>Depois de abrir a faixa, você pode usar a troca grátis. Os pulos extras que ganhar ficam em Usar poder.</span></li>
+          <li><strong>Trocar faixa.</strong><span>Cada equipe tem uma troca grátis por partida. Depois de abrir a faixa, o botão usa a grátis primeiro. Você também pode gastar pulos ganhos ali, até em sequência.</span></li>
           <li><strong>Ganhe um poder surpresa.</strong><span>Marque o acerto do título em até 3 s e toque em Sortear poder. Leia o que a equipe ganhou e toque em Próxima rodada.</span></li>
           <li><strong>Escolha qual poder usar.</strong><span>Toque em Usar poder, escolha a equipe e o poder que ela vai gastar. Para atacar uma rival, use antes de abrir a pista. Cabe um ataque por rodada.</span></li>
-          <li><strong>Poderes da sua equipe.</strong><span>Escolha um por rodada. Vale o dobro duplica os pontos se usado antes de abrir a faixa. Duas tentativas libera outro palpite. Pular música troca a faixa e mantém a vez.</span></li>
+          <li><strong>Poderes da sua equipe.</strong><span>Escolha entre Vale o dobro e Duas tentativas a cada rodada. Ative o dobro antes de abrir a faixa ou use Duas tentativas para fazer outro palpite.</span></li>
         </ol>
         <button className="button button-primary full-width" onClick={() => dialogRef.current.close()}>Entendi <ArrowRight size={20} /></button>
       </div>
@@ -320,7 +320,6 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
   const track = game.deck[game.trackIndex];
   const { url, label: trackLabel, accessibleLabel, Icon: TrackIcon } = getTrackAction(track, game.effect);
   const { team, turn, canSwap, canRetry, remainingSkips } = round;
-  const swapLabel = team.swapUsed ? 'Troca usada' : 'Trocar faixa';
   const target = players[(turn + 1) % players.length];
 
   useLayoutEffect(() => {
@@ -343,14 +342,13 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
       </div>
       <div className="player-controls">
         <div className="bonus-options" role="group" aria-label="Ações da rodada">
-          {!practice && <button className="bonus-button swap-button" onClick={() => {
-            dispatch({ type: 'swap' });
-            trackLink.current?.focus({ preventScroll: true });
-          }} disabled={!canSwap} aria-label={swapLabel} aria-describedby="saldo-pulos" title="Use a troca grátis depois de abrir a faixa e antes de revelar">
+          <button type="button" className="bonus-button swap-button" onClick={() => dispatch({ type: 'swap' })}
+            disabled={!canSwap} aria-label="Trocar faixa" aria-describedby="saldo-pulos"
+            title={round.lastTrack ? 'Última faixa da partida' : !canSwap && !team.swapUsed ? 'Abra a faixa para usar a troca grátis' : undefined}>
             <Shuffle size={16} aria-hidden="true" />
-            {swapLabel} <span aria-hidden="true">{remainingSkips}</span>
-            <span id="saldo-pulos" className="sr-only">{remainingSkips === 1 ? '1 pulo restante' : remainingSkips + ' pulos restantes'}</span>
-          </button>}
+            Trocar faixa <span aria-hidden="true">{remainingSkips}</span>
+            <span id="saldo-pulos" className="sr-only" role="status">{remainingSkips === 1 ? '1 pulo restante' : remainingSkips + ' pulos restantes'}</span>
+          </button>
           {game.powersEnabled ? <PowerUse key={game.round} game={game} turn={turn} players={players} onUse={action => {
             dispatch(action);
             trackLink.current?.focus({ preventScroll: true });

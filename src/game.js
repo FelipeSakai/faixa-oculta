@@ -59,9 +59,9 @@ export function powerBlockReason(game, sourceTeam, id) {
     if (game.opened) return 'trackOpened';
   } else {
     if (sourceTeam !== turn) return 'ownTurn';
-    if (game.retry || game.powerSkipped || game.doubled) return 'ownPowerUsed';
+    if (id === 'skipTrack') return lastTrack ? 'lastTrack' : null;
+    if (game.retry || game.doubled) return 'ownPowerUsed';
     if (id === 'doublePoints' && game.opened) return 'trackOpened';
-    if (id === 'skipTrack' && lastTrack) return 'lastTrack';
   }
   return null;
 }
@@ -115,6 +115,12 @@ function pointValues(track, doubled) {
   return { titlePoints, personalOrigins, originPoints };
 }
 
+function swapPayment(game, team, allowFree) {
+  if (game.phase !== 'listen' || game.trackIndex >= game.deck.length - 1) return null;
+  if (allowFree && game.opened && !team.swapUsed) return 'free';
+  return game.powersEnabled && team.powers?.skipTrack > 0 ? 'skipTrack' : null;
+}
+
 export function getRound(game) {
   const turn = (game.round - 1) % game.teams.length;
   const team = game.teams[turn];
@@ -133,7 +139,7 @@ export function getRound(game) {
     points,
     endsAfterRound: team.score + points >= game.goal || lastTrack,
     remainingSkips: (team.swapUsed ? 0 : 1) + (team.powers?.skipTrack ?? 0),
-    canSwap: listening && !team.swapUsed && game.opened && !lastTrack,
+    canSwap: swapPayment(game, team, true) !== null,
     canRetry: listening && game.opened && game.retry === 'ready',
     canEarnPower: game.powersEnabled && game.effect !== 'readLyrics',
   };
@@ -141,6 +147,24 @@ export function getRound(game) {
 
 function updateTeam(teams, turn, changes) {
   return teams.map((team, index) => index === turn ? { ...team, ...changes } : team);
+}
+
+function swapTrack(game, turn, allowFree) {
+  const team = game.teams[turn];
+  const payment = swapPayment(game, team, allowFree);
+  if (!payment) return game;
+  const paid = payment === 'skipTrack';
+  const changes = paid ? { powers: { ...team.powers, skipTrack: team.powers.skipTrack - 1 } } : { swapUsed: true };
+  return {
+    ...game,
+    trackIndex: game.trackIndex + 1,
+    opened: false,
+    retry: game.retry ? 'ready' : null,
+    powerSkipped: paid || game.powerSkipped,
+    unheardSkips: game.opened ? game.unheardSkips : [...(game.unheardSkips ?? []), game.trackIndex],
+    notice: paid && game.notice?.team === turn && game.notice.power === 'skipTrack' ? null : game.notice,
+    teams: updateTeam(game.teams, turn, changes),
+  };
 }
 
 function recordRound(game, award) {
@@ -264,7 +288,7 @@ function correctLastRound(game, action) {
 }
 
 export function gameReducer(game, action) {
-  const { turn, team, canSwap, canRetry, canEarnPower, endsAfterRound, points, originPoints } = getRound(game);
+  const { turn, team, canRetry, canEarnPower, endsAfterRound, points, originPoints } = getRound(game);
 
   switch (action.type) {
     case 'correctLastRound':
@@ -274,24 +298,15 @@ export function gameReducer(game, action) {
     case 'openTrack':
       return game.phase === 'listen' && !game.opened ? { ...game, opened: true } : game;
     case 'swap':
-      if (!canSwap) return game;
-      return {
-        ...game,
-        trackIndex: game.trackIndex + 1,
-        opened: false,
-        retry: game.retry ? 'ready' : null,
-        teams: updateTeam(game.teams, turn, { swapUsed: true }),
-      };
+      return swapTrack(game, turn, true);
     case 'usePower': {
       const { sourceTeam, targetTeam, power } = action;
-      if (targetTeam !== turn || !usablePowerIds(game, sourceTeam).includes(power)) return game;
+      if (targetTeam !== turn) return game;
+      if (power === 'skipTrack') return sourceTeam === turn ? swapTrack(game, turn, false) : game;
+      if (!usablePowerIds(game, sourceTeam).includes(power)) return game;
       const stock = game.teams[sourceTeam].powers;
       let changes;
       if (powers[power].opponent) changes = { effect: power, effectSource: sourceTeam };
-      else if (power === 'skipTrack') {
-        changes = { trackIndex: game.trackIndex + 1, opened: false, powerSkipped: true };
-        if (!game.opened) changes.unheardSkips = [...(game.unheardSkips ?? []), game.trackIndex];
-      }
       else if (power === 'doublePoints') changes = { doubled: true };
       else changes = { retry: 'ready' };
       return {

@@ -4,9 +4,7 @@ Jogo musical em Modo Misto, solo ou por equipes. O baralho reúne seleções fix
 
 Em **Equipes**, adicione quantas equipes precisar e dê um nome a cada uma, se quiser. A vez segue a ordem da configuração e o placar acompanha a equipe ativa. A primeira a alcançar a meta vence.
 
-Cada equipe tem uma **Troca de faixa** por partida, disponível depois de abrir a faixa e antes de revelar. A troca descarta a faixa atual e mantém a vez e o dobro, se estiver ativo. No solo, você também tem uma troca.
-
-O número ao lado de **Trocar faixa** soma a troca grátis e os poderes **Pular música** que a equipe da vez ainda tem. Para gastar um desses poderes, toque em **Usar poder**.
+Cada equipe começa com uma troca grátis, inclusive no solo. O número em **Trocar faixa** soma a troca grátis e os pulos que a equipe ganhou. Se a faixa já foi aberta e a troca grátis ainda está disponível, o botão usa a grátis primeiro. Os pulos ganhos podem ser usados no mesmo botão até antes de abrir a faixa. Cada toque troca uma música e desconta um pulo. A equipe continua na vez.
 
 Novas partidas começam com **Poderes** ligados. Você pode desligá-los na configuração ou tocar em **Ativar poderes** durante a escuta de uma partida que começou com eles desligados. Se o DJ marcar um acerto de título em até 3 segundos de áudio e a partida continuar, toque em **Sortear poder** para ver a equipe, o nome do poder e seu efeito. A recompensa já está guardada e fica na tela até o DJ tocar em **Próxima rodada**. Em equipes podem sair sete poderes. No solo podem sair **Duas tentativas**, **Pular música** e **Vale o dobro**.
 
@@ -17,8 +15,8 @@ Durante a escuta, **Usar poder** abre os poderes guardados pelas equipes e indic
 - **Só a letra** pede ao DJ que leia um trecho da letra sem revelar o título.
 - **Sem vocal** mostra o botão **Buscar instrumental** para o DJ escolher uma versão instrumental ou de karaokê.
 - **Duas tentativas** é um poder da própria equipe. Ela pode ativá-lo antes de revelar, inclusive quando recebeu um ataque. O botão **2º palpite** libera a nova tentativa. Esse poder também funciona no solo.
-- **Pular música** troca a faixa por outra na vez da própria equipe, antes da revelação e enquanto houver outra faixa no baralho. A equipe mantém o turno, o placar e o bônus de troca por partida.
-- **Vale o dobro** pode ser usado na vez da própria equipe, antes de abrir a faixa. O título passa a valer 4 pontos. Se houver bônus de playlist pessoal, ele vale 2. Cada equipe pode usar um poder próprio por rodada. Nas partidas salvas antes desta mudança, o dobro que a equipe ainda tinha fica guardado em **Usar poder**.
+- **Pular música** acrescenta um pulo ao saldo da equipe. Ela pode gastar vários pulos na mesma rodada enquanto houver outra faixa no baralho. O dobro ou a segunda tentativa continuam valendo na nova faixa.
+- **Vale o dobro** pode ser usado na vez da própria equipe, antes de abrir a faixa. O título passa a valer 4 pontos. Se houver bônus de playlist pessoal, ele vale 2. A equipe escolhe entre **Vale o dobro** e **Duas tentativas** em cada rodada. Nas partidas salvas antes desta mudança, o dobro que a equipe ainda tinha fica guardado em **Usar poder**.
 
 O treino pode ser aberto pelo endereço do jogo com `#teste-poderes` no final. Ele começa na vez da Equipe 2, com poderes guardados para experimentar um ataque da Equipe 4.
 
