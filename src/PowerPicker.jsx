@@ -21,6 +21,7 @@ function defaultOwner(owners, turn) {
 
 export function PowerUse({ game, turn, players, onUse }) {
   const dialog = useRef(null);
+  const storedSkips = game.teams[turn].powers.skipTrack ?? 0;
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selected, setSelected] = useState(null);
   const owners = game.teams.map((team, index) => ({
@@ -49,8 +50,12 @@ export function PowerUse({ game, turn, players, onUse }) {
 
   return (
     <div className="power-activation">
-      <button type="button" className="bonus-button power-trigger" aria-haspopup="dialog" onClick={open}>
-        <Zap size={16} aria-hidden="true" /> Usar poder
+      <button type="button" className="bonus-button power-trigger" aria-label="Usar poder" aria-haspopup="dialog"
+        aria-describedby={storedSkips > 0 ? 'pulos-guardados' : undefined} onClick={open}>
+        <Zap size={16} aria-hidden="true" />
+        <span className="bonus-label">Usar poder
+          {storedSkips > 0 && <small id="pulos-guardados">{storedSkips === 1 ? '1 pulo guardado' : storedSkips + ' pulos guardados'}</small>}
+        </span>
       </button>
       <dialog ref={dialog} className="rules-dialog power-use-dialog" aria-labelledby="usar-poder-title"
         aria-describedby={owners.length ? 'alvo-poder' : 'sem-poder'}>

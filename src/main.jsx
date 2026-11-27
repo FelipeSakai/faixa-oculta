@@ -80,7 +80,7 @@ function Rules({ dialogRef, deck }) {
           <li><strong>O DJ toca a faixa no Spotify.</strong><span>Só o DJ vê a faixa.</span></li>
           <li><strong>Palpite em voz alta.</strong><span>Diga o título. Se reconhecer uma playlist pessoal, você também pode dizer de quem é.{choices && ' Nesta partida, vale tentar ' + choices + '.'}</span></li>
           <li><strong>Revele e marque os pontos.</strong><span>O título vale 2 pontos. Acertar de quem é a playlist vale mais 1, mesmo se errar o título. Quem bate a meta vence.</span></li>
-          <li><strong>Uma troca por equipe.</strong><span>Depois de abrir a faixa, você pode trocá-la uma vez por partida.</span></li>
+          <li><strong>Uma troca grátis por equipe.</strong><span>Depois de abrir a faixa, você pode usar a troca grátis. Os pulos extras que ganhar ficam em Usar poder.</span></li>
           <li><strong>Ganhe um poder surpresa.</strong><span>Marque o acerto do título em até 3 s e toque em Sortear poder. Leia o que a equipe ganhou e toque em Próxima rodada.</span></li>
           <li><strong>Escolha qual poder usar.</strong><span>Toque em Usar poder, escolha a equipe e o poder que ela vai gastar. Para atacar uma rival, use antes de abrir a pista. Cabe um ataque por rodada.</span></li>
           <li><strong>Poderes da sua equipe.</strong><span>Escolha um por rodada. Vale o dobro duplica os pontos se usado antes de abrir a faixa. Duas tentativas libera outro palpite. Pular música troca a faixa e mantém a vez.</span></li>
@@ -319,7 +319,10 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
   const retryButton = useRef(null);
   const track = game.deck[game.trackIndex];
   const { url, label: trackLabel, accessibleLabel, Icon: TrackIcon } = getTrackAction(track, game.effect);
-  const { team, turn, canSwap, canRetry } = round;
+  const { team, turn, canSwap, canRetry, remainingSkips } = round;
+  const swapLabel = team.swapUsed ? 'Troca grátis usada' : 'Trocar faixa';
+  const skipCount = remainingSkips === 1 ? '1 pulo' : remainingSkips + ' pulos';
+  const skipBalance = team.powers.skipTrack > 0 ? skipCount + ' no total' : team.swapUsed ? skipCount : '1 pulo grátis';
   const target = players[(turn + 1) % players.length];
 
   useLayoutEffect(() => {
@@ -345,9 +348,9 @@ function TrackPlayer({ game, round, players, dispatch, practice = false }) {
           {!practice && <button className="bonus-button" onClick={() => {
             dispatch({ type: 'swap' });
             trackLink.current?.focus({ preventScroll: true });
-          }} disabled={!canSwap} title="Troque depois de abrir a faixa e antes de revelar">
+          }} disabled={!canSwap} aria-label={swapLabel} aria-describedby="saldo-pulos" title="Use a troca grátis depois de abrir a faixa e antes de revelar">
             <Shuffle size={16} aria-hidden="true" />
-            {team.swapUsed ? 'Troca usada' : 'Trocar faixa'}
+            <span className="bonus-label">{swapLabel}<small id="saldo-pulos">{skipBalance}</small></span>
           </button>}
           {game.powersEnabled ? <PowerUse key={game.round} game={game} turn={turn} players={players} onUse={action => {
             dispatch(action);

@@ -132,6 +132,7 @@ export function getRound(game) {
     originPoints,
     points,
     endsAfterRound: team.score + points >= game.goal || lastTrack,
+    remainingSkips: (team.swapUsed ? 0 : 1) + (team.powers?.skipTrack ?? 0),
     canSwap: listening && !team.swapUsed && game.opened && !lastTrack,
     canRetry: listening && game.opened && game.retry === 'ready',
     canEarnPower: game.powersEnabled && game.effect !== 'readLyrics',

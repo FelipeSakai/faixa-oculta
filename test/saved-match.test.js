@@ -320,6 +320,35 @@ test('um poder único no estoque também exige escolha explícita e elegível', 
   assert.equal(used.teams[2].powers.oneGuesser, 0);
 });
 
+test('o saldo de pulos soma a troca grátis e os poderes da equipe da vez, inclusive após retomar', () => {
+  const disk = memoryStorage();
+  let store = createMatchStore(() => disk);
+  const match = newMatch(['Azul', 'Verde']);
+  const oldGame = structuredClone(match.game);
+  delete oldGame.teams[0].powers.skipTrack;
+  assert.equal(getRound(oldGame).remainingSkips, 1);
+  store.commit(null, match);
+  play(store, 'reveal');
+  play(store, 'mark', { mark: 'title', checked: true });
+  play(store, 'mark', { mark: 'fast', checked: true });
+  const rewarded = play(store, 'score', { draw: 0.8 });
+  assert.equal(rewarded.award.power, 'skipTrack');
+  assert.equal(getRound(rewarded).remainingSkips, 2);
+
+  assert.equal(getRound(play(store, 'advance')).remainingSkips, 1);
+  play(store, 'openTrack');
+  assert.equal(getRound(play(store, 'swap')).remainingSkips, 0);
+  play(store, 'reveal');
+  assert.equal(getRound(play(store, 'score')).remainingSkips, 2);
+  const skipped = play(store, 'usePower', { power: 'skipTrack', sourceTeam: 0, targetTeam: 0 });
+  assert.equal(getRound(skipped).canSwap, false);
+  assert.equal(getRound(skipped).remainingSkips, 1);
+  store = createMatchStore(() => disk);
+  assert.equal(getRound(store.getSnapshot().match.game).remainingSkips, 1);
+  assert.equal(getRound(play(store, 'openTrack')).canSwap, true);
+  assert.equal(getRound(play(store, 'swap')).remainingSkips, 0);
+});
+
 test('pular faixa preserva a vez, o ataque e a troca grátis em qualquer ordem', () => {
   for (const freeSwapFirst of [true, false]) {
     const match = matchWithPowers();

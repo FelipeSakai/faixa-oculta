@@ -6,6 +6,8 @@ Em **Equipes**, adicione quantas equipes precisar e dê um nome a cada uma, se q
 
 Cada equipe tem uma **Troca de faixa** por partida, disponível depois de abrir a faixa e antes de revelar. A troca descarta a faixa atual e mantém a vez e o dobro, se estiver ativo. No solo, você também tem uma troca.
 
+**Trocar faixa** mostra quantos pulos a equipe da vez ainda tem, somando a troca grátis e os poderes **Pular música** guardados. **Usar poder** indica quantos desses pulos vieram de poderes e permite gastá-los.
+
 Novas partidas começam com **Poderes** ligados. Você pode desligá-los na configuração ou tocar em **Ativar poderes** durante a escuta de uma partida que começou com eles desligados. Se o DJ marcar um acerto de título em até 3 segundos de áudio e a partida continuar, toque em **Sortear poder** para ver a equipe, o nome do poder e seu efeito. A recompensa já está guardada e fica na tela até o DJ tocar em **Próxima rodada**. Em equipes podem sair sete poderes. No solo podem sair **Duas tentativas**, **Pular música** e **Vale o dobro**.
 
 Durante a escuta, **Usar poder** abre os poderes guardados pelas equipes e indica quando cada um pode ser usado. Selecione a equipe, escolha o poder e confirme em **Aplicar poder**. Antes de o DJ abrir a pista, qualquer equipe adversária pode gastar um ataque. A equipe da vez recebe o efeito imediatamente e continua jogando. Cada rodada admite um ataque.
